@@ -36,7 +36,7 @@ class HighriseAPICall {
         curl_setopt($curl, CURLOPT_URL, $this->_url . $resource_name);
         curl_setopt($curl, CURLOPT_USERPWD, $this>_api_key . ':X');
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HEADER, 1)
+        curl_setopt($curl, CURLOPT_HEADER, 1);
         curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->_default_timeout);
         if (isset($xml)) {
