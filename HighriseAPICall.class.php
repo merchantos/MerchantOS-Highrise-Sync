@@ -24,17 +24,17 @@ class HighriseAPICall {
     
     /**
      * Make the specified API call.
-     * @param string $action one of the four HTTP verbs supported by Highrise
+     * @param string $action one of the four HTTP verbs
      * @param string $resource_name the Highrise resource to be accessed
      * @param string $xml a well-formed XML string for a Highrise create, update, or delete request
-     * 
-     * $xml parameter should include any query parameters as suggested by Highrise API documentation
+     * @return SimpleXMLElement $result_simplexml
+     * $resource_name parameter should include any query parameters
+     * as suggested by Highrise API documentation
      * eg, if you want to GET all People, pass in "/people.xml"
      * and if you want to get People by search term where field=value,
      * then pass in "/people/search.xml?criteria[field]=value"
      */
     public function makeAPICall($action,$resource_name,$xml=null) {
-        echo $action . ' ' . $this->_url . $resource_name . ' ' . $this->_userpwd ;
         /* initialize curl session and set defaults for new API call */
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $this->_url . $resource_name);
@@ -42,26 +42,32 @@ class HighriseAPICall {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->_timeout);
+        
+        /* if xml was passed in, set header and postfields */
         if (isset($xml)) {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/xml'));
             curl_setopt($curl, CURLOPT_POSTFIELDS, $xml);
         }
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $action);
+        
+        /* set action as custom request */
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, strtoupper($action));
+        
         /* get the string response from executing the curl session */
         $result = curl_exec($curl);
         curl_close($curl);
         
         // return the response as a simpleXMLElement
         try {
-                $result_simplexml = new SimpleXMLElement($result);
+            $result_simplexml = new SimpleXMLElement($result);
         }
         catch (Exception $e) {
-                throw new Exception("Highrise API Call Error: " . $e->getMessage() . ", Response: " . $result);
+            throw new Exception("Highrise API Call Error: " . $e->getMessage() . ", Response: " . $result);
         }
         if (!is_object($result_simplexml)) {
-                throw new Exception("Highrise API Call Error: Could not parse XML, Response: " . $result);
+            throw new Exception("Highrise API Call Error: Could not parse XML, Response: " . $result);
         }
         return $result_simplexml;
     }
-
+    
 }
 ?>
