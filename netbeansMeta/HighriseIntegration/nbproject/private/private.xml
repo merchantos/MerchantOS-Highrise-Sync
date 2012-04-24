@@ -9,5 +9,9 @@
             <url>file:/var/www/HighriseIntegration/personToCustomer.xsl</url>
             <line>2</line>
         </file>
+        <file>
+            <url>file:/var/www/HighriseIntegration/peopleToCustomers.xsl</url>
+            <line>2</line>
+        </file>
     </editor-bookmarks>
 </project-private>

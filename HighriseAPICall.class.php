@@ -5,21 +5,18 @@
  *
  * @author Erika Ellison
  */
-error_reporting(E_ALL);
-error_reporting(E_STRICT);
 
 class HighriseAPICall {
-    protected $_timeout = 120;
-    protected $_url_prefix = 'https://';
-    protected $_url_suffix = '.highrisehq.com';
-    protected $_password = 'X';
-    
-    protected $_userpwd;
     protected $_url;
+    protected $_api_key;
+    protected $_password = 'X';
+    protected $_cert_filename = 'GeoTrustGlobalCA';
+
+    
     
     public function __construct($api_key, $username) {
-        $this->_userpwd= $api_key . ':' . $this->_password;
-        $this->_url = $this->_url_prefix . $username . $this->_url_suffix;
+        $this->_api_key = $api_key;
+        $this->_url = 'https://' . $username . '.highrisehq.com/';
     }
     
     /**
@@ -34,27 +31,44 @@ class HighriseAPICall {
      * and if you want to get People by search term where field=value,
      * then pass in "/people/search.xml?criteria[field]=value"
      */
-    public function makeAPICall($action,$resource_name,$xml=null) {
-        /* initialize curl session and set defaults for new API call */
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $this->_url . $resource_name);
-        curl_setopt($curl, CURLOPT_USERPWD, $this->_userpwd);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->_timeout);
+    public function makeAPICall($resource_name, $action,$xml=null) {
+        /* initialize curl session and set defaults for new Highrise API call */
+        $curl = new MOScURL();
+        $curl->setUserAgent("MerchantOS-Highrise-Sync");
+        $curl->setReturnTransfer(1);
+        $curl->setBasicAuth($this->_api_key, $this->_password);
         
-        /* if xml was passed in, set header and postfields */
+        // may need to enable these later
+        $curl->setVerifyPeer(false);
+        $curl->setVerifyHost(0);
+        //$curl->setCaInfo($this->_cert_filename);
+        
+        /* if xml was passed in, set header */
         if (isset($xml)) {
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/xml'));
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $xml);
+            $curl->setHTTPHeader(array('Content-type: application/xml'));
         }
         
-        /* set action as custom request */
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, strtoupper($action));
+        $custom_request = "GET";
+        switch ($action)
+        {
+                case "Create":
+                        $custom_request = "POST";
+                        break;
+                case "Read":
+                        $custom_request = "GET";
+                        break;
+                case "Update":
+                        $custom_request = "PUT";
+                        break;
+                case "Delete":
+                        $custom_request = "DELETE";
+                        break;
+        }
+        $curl->setCustomRequest($custom_request);
+        
         
         /* get the string response from executing the curl session */
-        $result = curl_exec($curl);
-        curl_close($curl);
+        $result = $curl->call($this->_url . $resource_name, $xml);
         
         // return the response as a simpleXMLElement
         try {

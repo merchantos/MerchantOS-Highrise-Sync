@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 require_once('MOScURL.class.php');
 
@@ -35,9 +35,12 @@ class MOSAPICall
 		}
 		$curl = new MOScURL();
 		$curl->setBasicAuth($this->_api_key,'apikey');
+                
+                // may need to enable these later
 		$curl->setVerifyPeer(false);
 		$curl->setVerifyHost(0);
-		$curl->setCustomRequest($custom_request);
+		
+                $curl->setCustomRequest($custom_request);
 		
 		$control_url = $this->_mos_api_url . str_replace(".","/",str_replace("Account.","Account." . $this->_account_num . ".",$controlname));
 		if (isset($unique_id))

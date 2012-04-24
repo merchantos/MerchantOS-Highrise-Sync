@@ -1,4 +1,10 @@
 <?php
+/**
+ * Method signatures have changed and it's very unlikely that any of these old tests
+ * will still work until I get around to writing an updated collection of tests.
+ */
+
+
 require_once("HighriseAPICall.class.php");
 require_once("MOSAPICall.class.php");
 
@@ -77,31 +83,46 @@ function getCompanyName($company_id) {
         
         // create XSLT processor
         $person_to_customer = new XSLTProcessor();        
-        $stylesheet = simplexml_load_file('personToCustomer.xsl');        
+        $stylesheet = simplexml_load_file('peopleToCustomers.xsl');        
         $person_to_customer->importStylesheet($stylesheet);
 
             
         // turn them into Customers
         foreach ($people->person as $person) {
             $person_xml = new SimpleXMLElement($person->asXML());
+            echo 'Highrise XML<br />';
             echo htmlentities($person_xml->asXML());
             echo '<br /><br />';
-            echo $person_xml->{'contact-data'}->addresses->address[0]->street;
-            echo '<br /><br />';
             
-            $customer_xml = new SimpleXMLElement($person_to_customer->transformToXML($person_xml));            
+            $customer_xml = new SimpleXMLElement($person_to_customer->transformToXML($person_xml));
+            echo 'MerchantOS XML<br />';
             echo htmlentities($customer_xml->asXML());
             echo '<br /><br />';
-            
-            //$response = $mos_api->makeAPICall('Account.Customer', 'Create', null, $customer_xml->asXML());
-            //echo htmlentities($response->asXML());
-            echo '<br /><br />';
-            echo '<br /><br />';
-            
-            
-            
+
         }
         
         ?>
     </body>
 </html>
+
+    
+<?php
+/** Not actually needed, it turns out.
+ * Was meant to be used in XSLT stylesheet
+ * after calling registerPHPFunctions() on processor.
+ *
+ * @global string $highrise_api_key
+ * @global string $highrise_username
+ * @param string $company_id
+ * @return string $name
+ */
+function getCompanyName($company_id) {
+    global $highrise_api_key, $highrise_username;
+    $highrise_api = new HighriseAPICall($highrise_api_key, $highrise_username);
+    
+    $company = $highrise_api->makeAPICall('GET', '/companies/' . $company_id . '.xml');
+    $name = (string) $company->name;
+    return $name;
+}
+
+?>
