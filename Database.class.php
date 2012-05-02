@@ -18,7 +18,7 @@ class Database {
     /** Constructs a new Database object
      */
     public function __construct() {
-        $this->_mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
+        $this->_mysqli = new mysqli(self::DB_HOSTNAME, self::DB_USERNAME, self::DB_PASSWORD, self::DB_NAME);
     }
  
     

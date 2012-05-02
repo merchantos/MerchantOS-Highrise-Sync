@@ -97,8 +97,18 @@ class APIInterface {
                 // confirm creation from XML response and put merchantos customerID back into Highrise
                 $merchantos_customerid = $response->customerID->asXML();
                 if ($merchantos_customerid) {
-                    $updated = $this->_highrise_api->makeAPICall('people/' . $customer->highrise_customerid . '.xml?reload=true', 'Update', $merchantos_customerid);
-                    if (!($updated->merchantos_customerid)) {
+                    // update the original Highrise person with the new MOS customerID
+                    $
+                    $updated = $this->updatePersonWithCustomerID($
+                    
+                    $update_xml = '<subject_datas type="array">
+                        <subject_data>
+                            <subject_field_label>merchantos-customerid</subject_field_label>
+                            <value><xsl:value-of select="customerID" /></value>
+                        </subject_data>
+                    </subject_datas>'
+                    $updated = $this->_highrise_api->makeAPICall('people' . $customer->highrise_customerid . '.xml?reload=true', 'Update', $merchantos_customerid);
+                    if (!($updated->subject_datas->subject_data->)) {
                         // report error somewhere
                     }
                 }
@@ -111,8 +121,8 @@ class APIInterface {
                 $uncreated_customers .= $customer_xml;
             }
         }
-        $uncreated_customers = simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?><Customers>' . $notCreated . '</Customers>');        
-        return $uncreated_customers;
+        /* $uncreated_customers = simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?><Customers>' . $notCreated . '</Customers>');        
+        return $uncreated_customers; */
     }
     
     /** creates all people passed in
@@ -215,8 +225,8 @@ class APIInterface {
     
     /** Archives all customers in the MerchantOS account, not meant to be used for anything but testing.
      */
-    public function archiveAllCustomers() {
-        for($i = 500; $i < 600; $i++) {
+    public function archiveAllCustomers($begin, $end) {
+        for($i = $begin; $i <= $end; $i += 2) {
             $result = $this->_mos_api->makeAPICall('Account.Customer', 'Delete', $i);
             echo htmlentities($result->asXML()), '<br />';
             usleep(1500000); // gets around the 60 requests per minute limit...takes longer, but doesn't get interrupted this way

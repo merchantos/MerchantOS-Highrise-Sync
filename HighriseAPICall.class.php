@@ -68,10 +68,11 @@ class HighriseAPICall {
 
         /* get the raw response from executing the curl session */
         $result = $curl->call($this->_url . $resource_name, $xml);
+        echo htmlentities($result);
         
         // return the response as a simpleXMLElement
         try {
-            $result_simplexml = new SimpleXMLElement($result);
+            $result_simplexml = simplexml_load_string($result);
         }
         catch (Exception $e) {
             throw new Exception('Highrise API Call Error: ' . $e->getMessage() . ', Response: ' . $result);

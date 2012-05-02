@@ -15,7 +15,6 @@
         <people>
             <xsl:for-each select="Customer">
                 <person>
-                    <merchantos_customerid><xsl:value-of select="customerID" /></merchantos_customerid>
                     <first-name><xsl:value-of select="firstName" /></first-name>
                     <last-name><xsl:value-of select="lastName" /></last-name>
                     <title><xsl:value-of select="title" /></title>
@@ -61,7 +60,13 @@
                         </addresses>
                     </contact-data>
 
-                <!-- custom fields go here -->
+                    <!-- custom fields -->
+                    <subject_datas type="array">
+                        <subject_data>
+                            <subject_field_label>merchantos-customerid</subject_field_label>
+                            <value><xsl:value-of select="customerID" /></value>
+                        </subject_data>
+                    </subject_datas>
 
                 </person>
             </xsl:for-each>
