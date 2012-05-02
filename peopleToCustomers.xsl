@@ -20,6 +20,7 @@
         <Customers>
             <xsl:for-each select="person">
                 <Customer>
+                    <highrise_personid><xsl:value-of select="id" /></highrise_personid>
                     <firstName><xsl:value-of select="first-name" /></firstName>
                     <lastName><xsl:value-of select="last-name" /></lastName>
                     <title><xsl:value-of select="title" /></title>

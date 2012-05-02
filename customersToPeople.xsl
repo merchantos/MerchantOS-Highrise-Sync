@@ -15,6 +15,7 @@
         <people>
             <xsl:for-each select="Customer">
                 <person>
+                    <merchantos_customerid><xsl:value-of select="customerID" /></merchantos_customerid>
                     <first-name><xsl:value-of select="firstName" /></first-name>
                     <last-name><xsl:value-of select="lastName" /></last-name>
                     <title><xsl:value-of select="title" /></title>

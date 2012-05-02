@@ -93,7 +93,6 @@ class MOScURL
 		$this->setVerifyHost(2);
 		
 		// For testing, curl on the production servers pull the correct certs.
-                // line below commented out because file does not exist in my environement
 		//$this->setCaInfo(INCLUDE_DIR.FORM_ROOT.'\misc_utils\mos_queue\certs\cacert.pem');
 		
 		$this->setHTTPHeader(false);
@@ -352,7 +351,7 @@ class MOScURL
 		
 		$raw_response = $this->wrapper_curl_exec();
 		
-                if ($raw_response === false)
+		if ($raw_response === false)
 		{
 			throw new Exception($this->wrapper_curl_error(),$this->wrapper_curl_errno());
 		}

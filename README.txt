@@ -1,0 +1,6 @@
+
+
+
+DEPENDENCIES:
+curl libcurl3 libcurl3-dev php5-curl
+php5-xsl

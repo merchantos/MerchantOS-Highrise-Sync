@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 6 test people -->
+
 <people>
 
     <person>
-        <FirstNamePerson-name>FirstNamePerson1</FirstNamePerson-name>
-        <LastNamePerson-name>LastNamePerson1</LastNamePerson-name>
+        <first-name>FirstNamePerson1</first-name>
+        <last-name>LastNamePerson1</last-name>
         <title>Title1</title>
         <background>Background1</background>
         <company-name>CompanyName1</company-name>
@@ -94,8 +94,8 @@
 
 
     <person>
-        <FirstNamePerson-name>FirstNamePerson2</FirstNamePerson-name>
-        <LastNamePerson-name>LastNamePerson2</LastNamePerson-name>
+        <first-name>FirstNamePerson2</first-name>
+        <last-name>LastNamePerson2</last-name>
         <title>Title2</title>
         <background>Background2</background>
         <company-name>CompanyName2</company-name>
@@ -185,8 +185,8 @@
 
 
     <person>
-        <FirstNamePerson-name>FirstNamePerson3</FirstNamePerson-name>
-        <LastNamePerson-name>LastNamePerson3</LastNamePerson-name>
+        <first-name>FirstNamePerson3</first-name>
+        <last-name>LastNamePerson3</last-name>
         <title>Title3</title>
         <background>Background3</background>
         <company-name>CompanyName3</company-name>
@@ -276,8 +276,8 @@
 
 
     <person>
-        <FirstNamePerson-name>FirstNamePerson4</FirstNamePerson-name>
-        <LastNamePerson-name>LastNamePerson4</LastNamePerson-name>
+        <first-name>FirstNamePerson4</first-name>
+        <last-name>LastNamePerson4</last-name>
         <title>Title4</title>
         <background>Background4</background>
         <company-name>CompanyName4</company-name>
@@ -367,8 +367,8 @@
 
 
     <person>
-        <FirstNamePerson-name>FirstNamePerson5</FirstNamePerson-name>
-        <LastNamePerson-name>LastNamePerson5</LastNamePerson-name>
+        <first-name>FirstNamePerson5</first-name>
+        <last-name>LastNamePerson5</last-name>
         <title>Title5</title>
         <background>Background5</background>
         <company-name>CompanyName5</company-name>
@@ -458,8 +458,8 @@
 
 
     <person>
-        <FirstNamePerson-name>FirstNamePerson6</FirstNamePerson-name>
-        <LastNamePerson-name>LastNamePerson6</LastNamePerson-name>
+        <first-name>FirstNamePerson6</first-name>
+        <last-name>LastNamePerson6</last-name>
         <title>Title6</title>
         <background>Background6</background>
         <company-name>CompanyName6</company-name>
@@ -548,48 +548,3 @@
     </person>
 
 </people>
-
-
-<!-- blank person 
-
-<person>
-    <FirstNamePerson-name></FirstNamePerson-name>
-    <LastNamePerson-name></LastNamePerson-name>
-    <title></title>
-    <background></background>
-    <company-name></company-name>
-    <contact-data>
-        <email-addresses>
-            <email-address>
-                <address></address>
-                <location>{ Work || Home || Other }</location>
-            </email-address>
-        </email-addresses>
-        <phone-numbers>
-            <phone-number>
-                <number></number>
-                <location>{ Work || Mobile || Fax || Pager || Home || Skype || Other }</location>
-            </phone-number>
-        </phone-numbers>
-        <addresses>
-            <address>
-                <city></city>
-                <country></country>
-                <state></state>
-                <street></street>
-                <zip></zip>
-                <location>{ Work || Home || Other }</location>
-            </address>
-        </addresses>
-        <web-addresses>
-            <web-address>
-                <url></url>
-                <location>{ Work || Personal || Other }</location>
-            </web-address>
-        </web-addresses>
-    </contact-data>
-    <tags type="array">
-    </tags>
-</person>
-
--->

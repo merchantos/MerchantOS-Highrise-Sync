@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 6 test Customers -->
 
 <Customers>
     
@@ -366,74 +365,3 @@
     </Customer>
 
 </Customers>
-
-<!-- blank Customer 
-
-
-<Customer>
-  <firstName></firstName>
-  <lastName></lastName>
-  <dob></dob>
-  <title></title>
-  <company></company>
-  <Contact>
-    <custom>Example string value.</custom>
-    <noEmail>true</noEmail>
-    <noPhone>true</noPhone>
-    <noMail>true</noMail>
-    <Addresses>
-      <ContactAddress>
-        <address1></address1>
-        <address2></address2>
-        <city></city>
-        <state></state>
-        <zip></zip>
-        <country></country>
-      </ContactAddress>
-    </Addresses>
-    <Phones>
-      <ContactPhone>
-        <number></number>
-        <useType readonly="true">Home</useType>
-      </ContactPhone>
-      <ContactPhone>
-        <number></number>
-        <useType readonly="true">Work</useType>
-      </ContactPhone>
-      <ContactPhone>
-        <number></number>
-        <useType readonly="true">Pager</useType>
-      </ContactPhone>
-      <ContactPhone>
-        <number></number>
-        <useType readonly="true">Mobile</useType>
-      </ContactPhone>
-      <ContactPhone>
-        <number></number>
-        <useType readonly="true">Fax</useType>
-      </ContactPhone>
-    </Phones>
-    <Emails>
-      <ContactEmail>
-        <address></address>
-        <useType readonly="true">Primary</useType>
-      </ContactEmail>
-      <ContactEmail>
-        <address></address>
-        <useType readonly="true">Secondary</useType>
-      </ContactEmail>
-    </Emails>
-    <Websites>
-      <ContactWebsite>
-        <url></url>
-      </ContactWebsite>
-    </Websites>
-  </Contact>
-  <Note>
-    <note>Note</note>
-    <isPublic>true</isPublic>
-  </Note>
-</Customer>
-
-
--->
