@@ -40,6 +40,14 @@ class SyncDateTime {
         // Highrise expects the format YYYYMMDDHHMMSS in GMT/UTC
         return $this->_datetime->format('YmdHis');
     }
+    
+    /** returns an int representing the SyncDateTime for easy datetime comparisons
+     * @return int 
+     */
+    public function getInt() {
+        // returns an int representing the Unix timestamp, for easier comparisons
+        return $this->_datetime->format('U');
+    }
 }
 
 ?>

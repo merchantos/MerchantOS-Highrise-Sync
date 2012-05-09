@@ -9,35 +9,39 @@
 
 class TransformXML {
     
-    /** Transforms a Customers XML document to a People XML document.
-     * @param SimpleXMLElement $customers_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customers schema
-     * @return SimpleXMLElement $people_xml a SimpleXMLElement representing a well-formed XML document in the Highrise People schema
+    /** Transforms a Customer XML document to a Person XML document.
+     * @param SimpleXMLElement $customer_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customer schema
+     * @return SimpleXMLElement $people_xml a SimpleXMLElement representing a well-formed XML document in the Highrise Person schema
      */
-    public static function customersToPeople($customers_xml) {
-        $people_xml = TransformXML::transform($customers_xml, 'customersToPeople.xsl');
-        return $people_xml;
+    public static function customerToPerson($customer_xml) {
+        $person_xml = TransformXML::transform($customer_xml, 'customerToPerson.xsl');
+        return $person_xml;
     }
     
-    /** Transforms a Customers XML document to a People XML document.
-     * @param SimpleXMLElement $people_xml a SimpleXMLElement representing a well-formed XML document in the Highrise People schema
-     * @return SimpleXMLElement $customers_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customers schema
+    /** Transforms a Person XML document to a Customer XML document.
+     * @param SimpleXMLElement $person_xml a SimpleXMLElement representing a well-formed XML document in the Highrise Person schema
+     * @return SimpleXMLElement $customer_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customer schema
      */
-    public static function peopleToCustomers($people_xml) {
-        $customers_xml = TransformXML::transform($people_xml, 'peopleToCustomers.xsl');
-        return $customers_xml;
+    public static function personToCustomer($person_xml) {
+        $customer_xml = TransformXML::transform($person_xml, 'personToCustomer.xsl');
+        return $customer_xml;
     }
     
-    /** appends all children elements of an XML document to another XML document
-    * both XML documents should have the same root element
+    /** appends deep copies of all children elements of an XML document to another XML document
+    * both XML documents should have root elements that are equivalent
     * @param SimpleXMLElement $xml1
     * @param SimpleXMLElement $xml2
-    * @return SimpleXMLElement $new_main
+    * @return SimpleXMLElement $merged
     */        
-    function mergeXML($xml1, $xml2) {
+    public static function mergeXML($xml1, $xml2) {
+        $updated_count = $xml1->count() + $xml2->count();
         $doc1 = dom_import_simplexml($xml1)->ownerDocument;
         foreach (dom_import_simplexml($xml2)->childNodes as $child) {
             $child = $doc1->importNode($child, TRUE);
             $doc1->documentElement->appendChild($child);
+        }
+        if ($doc1->documentElement->hasAttribute('count')) {
+            $doc1->documentElement->setAttribute('count', $updated_count);
         }
         $merged = simplexml_load_string($doc1->saveXML());
         return $merged;
@@ -55,59 +59,7 @@ class TransformXML {
         $new_xml = new SimpleXMLElement($processor->transformToXML($original_xml));
         return $new_xml;
     }
-    
-    
-    /**
-     *
-     * @param SimpleXMLElement $customers
-     * @param DateTime $datetime
-     * @return SimpleXMLElement $customers_created
-     */
-    public function allCustomersCreatedSince($customers, $datetime) {
-        
-        return $customers_created;
-    }
-            
-            
-    /**
-     *
-     * @param SimpleXMLElement $customers
-     * @param DateTime $datetime
-     * @return SimpleXMLElement $customers_modified
-     */        
-    public function onlyCustomersModifiedSince($customers, $datetime) {
-        
-        return $customers_modified;
-    }
-            
-            
-    /**
-     *
-     * @param SimpleXMLElement $people
-     * @param DateTime $datetime
-     * @return SimpleXMLElement $people_created
-     */        
-    public function allPeopleCreatedSince($people, $datetime) {
-        
-        return $people_created;
-    }
-            
-            
-    /**
-     *
-     * @param SimpleXMLElement $people
-     * @param DateTime $datetime
-     * @return SimpleXMLElement $people_modified
-     */        
-    public function onlyPeopleModifiedSince($people, $datetime) {
-        
-        return $people_modified;
-    }
-    
 
-    
-    
-    
 }
 
 ?>

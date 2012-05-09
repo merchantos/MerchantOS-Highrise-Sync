@@ -35,7 +35,7 @@ class HighriseAPICall {
         /* initialize curl session and set defaults for new Highrise API call */
         $curl = new MOScURL();
         $curl->setUserAgent('MerchantOS-Highrise-Sync');
-        $curl->setReturnTransfer(1);
+        $curl->setReturnTransfer(true);
         $curl->setBasicAuth($this->_api_key, $this->_password);
         
         // may need to enable these later
@@ -68,11 +68,10 @@ class HighriseAPICall {
 
         /* get the raw response from executing the curl session */
         $result = $curl->call($this->_url . $resource_name, $xml);
-        echo htmlentities($result);
         
         // return the response as a simpleXMLElement
         try {
-            $result_simplexml = simplexml_load_string($result);
+            $result_simplexml = new SimpleXMLElement($result);
         }
         catch (Exception $e) {
             throw new Exception('Highrise API Call Error: ' . $e->getMessage() . ', Response: ' . $result);

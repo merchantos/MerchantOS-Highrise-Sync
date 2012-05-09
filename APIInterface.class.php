@@ -7,6 +7,7 @@
 
 require_once('HighriseAPICall.class.php');
 require_once('MOSAPICall.class.php');
+require_once('TransformXML.class.php');
 
 class APIInterface {
     protected $_mos_api_key;
@@ -18,9 +19,14 @@ class APIInterface {
     protected $_highrise_api;
     
     const HIGHRISE_PERSONS_PER_PAGE = 500;
-    const MOS_CUSTOMERS_PER_PAGE = 500;
+    const MOS_CUSTOMERS_PER_PAGE = 100;
     
-    
+    /** Creates a new APIInterface
+     * @param string $mos_api_key
+     * @param string/int $mos_acct_id
+     * @param string $highrise_api_key
+     * @param string $highrise_username 
+     */
     public function __construct($mos_api_key, $mos_acct_id, $highrise_api_key, $highrise_username) {
         $this->_mos_api_key = $mos_api_key;
         $this->_mos_acct_id = $mos_acct_id;
@@ -31,10 +37,40 @@ class APIInterface {
         $this->_highrise_api = new HighriseAPICall($this->_highrise_api_key, $this->_highrise_username);
     }
     
-    
+    /** creates a new custom field in Highrise for people to use
+     * @param string $label_name the name the custom field should have
+     * @return SimpleXMLElement $custom_field
+     */
     public function defineCustomHighriseField($label_name) {
-        $xml_string = '<subject-field><label>' . $label_name . '</label></subject-field>';
-        $this->_highrise_api->makeAPICall('subject_fields.xml', 'Create', $xml_string);
+        $custom_field_xml = '<subject-field><label>' . $label_name . '</label></subject-field>';
+        try {
+            $xml_response = $this->_highrise_api->makeAPICall('subject_fields.xml', 'Create', $custom_field_xml);
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::defineCustomHighriseField error: ' . $e->getMessage());
+        }
+    }
+    
+    
+    /** finds the ID of the first person found in Highrise that has the given MerchantOS customer ID
+     * @param int/string $customer_id
+     * @return int/string $person_id
+     */
+    public function findPersonFromCustomerID($custID_field_name, $customer_id) {
+        $search_url = 'people/search.xml?criteria[' . $custID_field_name . ']=' . $customer_id;
+        try {
+            $result = $this->_highrise_api->makeAPICall($search_url, 'Read');
+            if ($result->count() == 0) {
+                $person_id = false;
+            }
+            else {
+                $person_id = (string) $result->person[0]->id;
+            }
+            return $person_id;
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::findPersonFromCustomerID error: ' . $e->getMessage());
+        }
     }
     
     
@@ -42,186 +78,204 @@ class APIInterface {
      * @return SimpleXMLElement $all_customers
      */
     public function readAllCustomers() {
-        $all_customers;
-        $offset = 0;
-        $query_prefix = 'limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=';
-        do {
-            $query_string = $query_prefix . $offset;
-            if ($offset == 0) {
-                $all_customers = $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
-            }
-            else {
-                $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
-                $all_customers = TransformXML::mergeXML($all_customers, $page);
-            }
-            $offset += self::MOS_CUSTOMERS_PER_PAGE;
-        } while ($page->count() == self::MOS_CUSTOMERS_PER_PAGE);
-        return $all_customers;
+        try {
+            $all_customers;
+            $offset = 0;
+            $query_prefix = 'limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=';
+            do {
+                $query_string = $query_prefix . $offset;
+                if ($offset == 0) {
+                    $all_customers = $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
+                }
+                else {
+                    $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
+                    $all_customers = TransformXML::mergeXML($all_customers, $page);
+                }
+                $offset += self::MOS_CUSTOMERS_PER_PAGE;
+            } while ($page->count() == self::MOS_CUSTOMERS_PER_PAGE);
+            return $all_customers;
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::readAllCustomers error: ' . $e->getMessage());
+        }
     }
+    
 
+    /** Reads all People that have been created since the datetime given.
+     * @param string $datetime in MerchantOS format
+     * @return SimpleXMLElement $customers_since
+     */
+    public function readCustomersCreatedSince($datetime) {
+        try {
+            $query_string = 'createTime=' . urlencode('>,' . $datetime);        
+            $offset = 0;
+            do {
+                $query_string .= '&limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=' . $offset;
+                if ($offset == 0) {
+                    $customers_since = $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
+                }
+                else {
+                    $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
+                    $customers_since = TransformXML::mergeXML($customers_since, $page);
+                }
+                $offset += self::MOS_CUSTOMERS_PER_PAGE;
+            } WHILE ($page->count() == self::MOS_CUSTOMERS_PER_PAGE);
+            
+            return $customers_since;
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::readCustomersSince error: ' . $e->getMessage());
+        }
+    }
+    
+    
+    /** Reads all People that have been modified since the datetime given.
+     * @param string $datetime in MerchantOS format
+     * @return SimpleXMLElement $customers_since
+     */
+    public function readCustomersModifiedSince($datetime) {
+        try {
+            $query_string = 'timeStamp=' . urlencode('>,'. $datetime) . '&createTime=' . urlencode('<,' . $datetime);
+            $offset = 0;
+            do {
+                $query_string .= '&limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=' . $offset;
+                if ($offset == 0) {
+                    $customers_since = $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
+                }
+                else {
+                    $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
+                    $customers_since = TransformXML::mergeXML($customers_since, $page);
+                }
+                $offset += self::MOS_CUSTOMERS_PER_PAGE;
+            } WHILE ($page->count() == self::MOS_CUSTOMERS_PER_PAGE);
+
+            return $customers_since;
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::readCustomersSince error: ' . $e->getMessage());
+        }
+    }
+    
     
     /** reads all People in Highrise
      * @return SimpleXMLElement $all_people
      */
     public function readAllPeople() {
-        $all_people;
-        $offset = 0;
-        // deals with Highrise pagination by repeating the read call with increased offset
-        // while the number of results in the last response is equal to Highrise page limit
-        // also keeps adding the most recent XML to the original XML tree, so that
-        // only one SimpleXMLElement needs to be returned to hide pagination from the caller
-        do {
-            if ($offset == 0) {
-               $all_people = $page = $this->_highrise_api->makeAPICall('people.xml', 'Read');
-            }
-            else {
-                $page = $this->_highrise_api->makeAPICall('people.xml?n=' . $offset, 'Read');
-                $all_people = TransformXML::mergeXML($all_people, $page);
-            }
-            $offset += self::HIGHRISE_PERSONS_PER_PAGE;
-        } while ($page->count() == self::HIGHRISE_PERSONS_PER_PAGE);
-        
-        return $all_people;
-    }
-
-    /** creates all Customers passed in
-     * @param SimpleXMLElement $customers 
-     * @return SimpleXMLElement $uncreated_customers
-     */
-    public function createCustomers($customers) {
-        $uncreated_customers = '';
-        foreach($customers->Customer as $customer) {
-            $customer_xml = $customer->asXML();
-            try {
-                $response = $this->_mos_api->makeAPICall('Account.Customer', 'Create', null, $customer_xml);
-                // confirm creation from XML response and put merchantos customerID back into Highrise
-                $merchantos_customerid = $response->customerID->asXML();
-                if ($merchantos_customerid) {
-                    // update the original Highrise person with the new MOS customerID
-                    $
-                    $updated = $this->updatePersonWithCustomerID($
-                    
-                    $update_xml = '<subject_datas type="array">
-                        <subject_data>
-                            <subject_field_label>merchantos-customerid</subject_field_label>
-                            <value><xsl:value-of select="customerID" /></value>
-                        </subject_data>
-                    </subject_datas>'
-                    $updated = $this->_highrise_api->makeAPICall('people' . $customer->highrise_customerid . '.xml?reload=true', 'Update', $merchantos_customerid);
-                    if (!($updated->subject_datas->subject_data->)) {
-                        // report error somewhere
-                    }
+        try {
+            $all_people;
+            $offset = 0;
+            do {
+                if ($offset == 0) {
+                $all_people = $page = $this->_highrise_api->makeAPICall('people.xml', 'Read');
                 }
                 else {
-                    $uncreated_customers .= $customer_xml;
+                    $page = $this->_highrise_api->makeAPICall('people.xml?n=' . $offset, 'Read');
+                    $all_people = TransformXML::mergeXML($all_people, $page);
                 }
-            }
-            catch (Exception $e) {
-                $customer_xml.addChild('exception', $e->getMessage());
-                $uncreated_customers .= $customer_xml;
-            }
-        }
-        /* $uncreated_customers = simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?><Customers>' . $notCreated . '</Customers>');        
-        return $uncreated_customers; */
-    }
-    
-    /** creates all people passed in
-     * @param SimpleXMLElement $people
-     * @return SimpleXMLElement $uncreated_people 
-     */
-    public function createPeople($people) {
-        $uncreated_people = '';
-        foreach($people->person as $person) {
-            try {
-                $response = $this->_highrise_api->makeAPICall('people.xml', 'Create', $person->asXML());
-                // confirm creation from XML response
-                if (!($response->id)) {
-                    $uncreated_people .= $person_xml;
-                }
-            }
-            catch (Exception $e) {
-                $uncreated_people .= $person_xml;
-                // send $cusotmer_xml and $e->getMessage() to some error log?
-            }
-        }
-        $uncreated_people = simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?><people>' . $uncreated_people . '</people>'); 
-        return $uncreated_people;
-    }
-    
-    
-    /**
-     *
-     * @param SyncDateTime $datetime
-     * @return SimpleXMLElement $customers_since
-     */
-    public function getCustomersSince($datetime) {
-        $query_string = 'createTime=' . urlencode('>,' . $datetime->getMerchantOSFormat());
-        echo $query_string . '<br />';
-        
-        $offset = 0;
-        do {
-            $query_string .= '&limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=' . $offset;
-            if ($offset == 0) {
-                $customers_since = $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
-            }
-            else {
-                $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
-                $customers_since = TransformXML::mergeXML($customers_since, $page);
-            }
-            $offset += self::MOS_CUSTOMERS_PER_PAGE;
-        } WHILE ($page->count() == self::MOS_CUSTOMERS_PER_PAGE);
-        
-        return $customers_since;
-    }
+                $offset += self::HIGHRISE_PERSONS_PER_PAGE;
+            } while ($page->count() == self::HIGHRISE_PERSONS_PER_PAGE);
 
+            return $all_people;
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::readAllPeople error: ' . $e->getMessage());
+        }
+    }
     
-    /**
-     *
-     * @param SyncDateTime $datetime
+    
+    /** Reads all People that have been created or modified since the datetime given.
+     * @param string $datetime in Highrise format
      * @return SimpleXMLElement $people_since
      */
-    public function getPeopleSince($datetime) {        
-        $query_string = '?since=' . $datetime->getHighriseFormat();
-        
-        $offset = 0;
-        do {
-            if ($offset == 0) {
-                $people_since = $page = $this->_highrise_api->makeAPICall ('people.xml' . $query_string, 'Read');
-            }
-            else {
-                $page = $this->_highrise_api->makeAPICall ('people.xml' . $query_string . '&n=' . $offset, $action);
-                $people_since = TransformXML::mergeXML($people_since, $page);
-            }
-            
-        } while ($page->count() == self::HIGHRISE_PERSONS_PER_PAGE);
+    public function readPeopleSince($datetime) {        
+        try {
+            $query_string = '?since=' . $datetime;
+            $offset = 0;
+            do {
+                if ($offset == 0) {
+                    $people_since = $page = $this->_highrise_api->makeAPICall('people.xml' . $query_string, 'Read');
+                }
+                else {
+                    $page = $this->_highrise_api->makeAPICall ('people.xml' . $query_string . '&n=' . $offset, $action);
+                    $people_since = TransformXML::mergeXML($people_since, $page);
+                }
 
-        return $people_since;
+            } while ($page->count() == self::HIGHRISE_PERSONS_PER_PAGE);
+
+            return $people_since;
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::readPeopleSince error: ' . $e->getMessage());
+        }
+    }
+    
+    
+    /** Creates a customer in MerchantOS
+     * @param SimpleXMLElement $customer the xml of the customer to be created
+     * @return SimpleXMLElement $customer_xml the created customer's xml
+     */
+    public function createCustomer($customer) {
+        try {
+            $customer_xml = $this->_mos_api->makeAPICall('Account.Customer', 'Create', null, $customer->asXML());
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::createCustomer error: ' . $e->getMessage());
+        }
+        return $customer_xml;
+    }
+    
+
+    /** Updates a customer in MerchantOS with the given XML.
+     * @param int $customer_id
+     * @param SimpleXMLElement $update_xml the XML to update the customer with
+     * @return SimpleXMLElement $updated the updated XML of the customer
+     */
+    public function updateCustomer($customer_id, $update_xml) {
+        try {
+            $updated = $this->_mos_api->makeAPICall('Account.Customer', 'Update', $customer_id, $update_xml->asXML());
+            return $updated;
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::updateCustomer error: ' . $e->getMessage());
+        }
     }
 
     
-    /**
-     *
-     * @param SimpleXMLElement $customers
-     * @return SimpleXMLElement $unupdated_customers
+    /** Creates a person in Highrise
+     * @param SimpleXMLElement $person the xml of the person to be created
+     * @return SimpleXMLElement $person_xml the created person's xml
      */
-    public function updateCustomers($customers) {
-        foreach($customers->customer as $customer) {
+    public function createPerson($person) {
+        try {
+            $person_xml = $this->_highrise_api->makeAPICall('people.xml', 'Create', $person->asXML());
             
         }
-
-        return $unupdated_customers;
+        catch (Exception $e) {
+            throw new Exception('APIInterface::createPerson error: ' . $e->getMessage());
+        }
+        return $person_xml;
     }
+    
+    
+    /** Updates a person in Highrise with the given xml.
+     * @param int $person_id
+     * @param SimpleXMLElement $update_xml the XML to update the person with
+     * @return SimpleXMLElement $updated the updated XML of the person
+     */
+    public function updatePerson($person_id, $update_xml) {
+        try {
+            $updated = $this->_highrise_api->makeAPICall('people/' . $person_id . '.xml?reload=true', 'Update', $update_xml->asXML());
+            return $updated;
+        }
+        catch (Exception $e) {
+            throw new Exception('APIInterface::updatePerson error: ' . $e->getMessage());
+        }
+    }
+    
 
     
-    /**
-     *
-     * @param SimpleXMLElement $customers
-     * @return SimpleXMLElement $unupdated_people
-     */
-    public function updatePeople($customers) {
 
-        return $unupdated_people;
-    }
+    
     
     /** Archives all customers in the MerchantOS account, not meant to be used for anything but testing.
      */
