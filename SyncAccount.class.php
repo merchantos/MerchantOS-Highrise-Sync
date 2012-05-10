@@ -10,7 +10,7 @@
 
 require_once('SyncDateTime.class.php');
 require_once('APIInterface.class.php');
-require_once('TransformXML.class.php');
+require_once('XMLTransformations.class.php');
 
 class SyncAccount {
     protected $_email_address;
@@ -23,6 +23,8 @@ class SyncAccount {
     protected $_last_synced_on;  // type SyncDateTime
     protected $_id; // primary key in database table
     
+    protected $_custom_field_id;    
+    
     protected $_api_interface;
     
     // a custom-defined foreign key field in Highrise for MerchantOS customerID
@@ -31,19 +33,24 @@ class SyncAccount {
     const HIGHRISE_CUST_ID_FIELD_NAME = 'merchantos_customerid';
     
     /**
-     *
+     * @param string $mos_api_key
+     * @param string $mos_acct_id
+     * 
+     * @param string $highrise_api_key
+     * @param string $highrise_username
+     * 
      * @param string $email_address
      * @param string $password
      * @param string $name
-     * @param string $mos_api_key
-     * @param string $mos_acct_id
-     * @param string $highrise_api_key
-     * @param string $highrise_username
-     * @param string $last_synced_on
-     * @param string $id 
+     * 
+     * @param string/int
+     * @param string/datetime $last_synced_on
+     * @param string/int $id 
      */
-    public function __construct($email_address, $password, $name, $mos_api_key, $mos_acct_id, 
-            $highrise_api_key, $highrise_username, $last_synced_on=NULL, $id=NULL) {
+    public function __construct($mos_api_key, $mos_acct_id, 
+            $highrise_api_key, $highrise_username, 
+            $email_address, $password, $name,
+            $custom_field_id=NULL, $id=NULL, $last_synced_on=NULL) {
         
         $this->_email_address = $email_address;
         $this->_password = $password;
@@ -57,10 +64,10 @@ class SyncAccount {
         }
         $this->_id = $id;
         
-        $this->_api_interface = new APIInterface($mos_api_key, $mos_acct_id, $highrise_api_key, $highrise_username);
         
-        $this->verifyCredentials();
-
+        $this->_custom_field_id = $custom_field_id;
+        
+        $this->_api_interface = new APIInterface($mos_api_key, $mos_acct_id, $highrise_api_key, $highrise_username);
     }
     
     
@@ -69,16 +76,23 @@ class SyncAccount {
      * 
      */
     public function sync() {
-        
-        if (!(isset($this->_last_synced_on))) {
-            $this->initialSync();
+        try {
+            if (!(isset($this->_last_synced_on))) {
+                $this->initialSync();
+            }
+            else {
+                $this->incrementalSync();
+            }
+            $this->_last_synced_on = new SyncDateTime();
+            $last_synced_on =  $this->_last_synced_on->getDatabaseFormat();
+            return $last_synced_on;
         }
-        else {
-            $this->incrementalSync();
+        catch (Exception $e) {
+            // should probably only be exceptions for which the sync attempt should be aborted
+            // like credentials not being good or a read all call failing
+            // individual write failures should be handled and reported
+            
         }
-        $this->_last_synced_on = new SyncDateTime();
-        $last_synced_on =  $this->_last_synced_on->getDatabaseFormat();
-        return $last_synced_on;
     }
 
     /** Copies all Customers in MerchantOS to Highrise, and all People in Highrise to MerchantOS.
@@ -86,22 +100,28 @@ class SyncAccount {
      */
     public function initialSync() {        
         // create a custom field in Highrise to track MerchantOS's customer id for each contact
-        $this->_api_interface->defineCustomHighriseField(self::HIGHRISE_CUST_ID_FIELD_NAME);      
-        // get all existing contacts first, so that
-        // there is no need to filter out contacts that have already been synced
+        $custom_field = $this->_api_interface->defineCustomHighriseField(self::HIGHRISE_CUST_ID_FIELD_NAME);    
+        $this->_custom_field_id = $custom_field->id;
+        
+        // get all existing contacts from each service
         $customers = $this->_api_interface->readAllCustomers();
         $people = $this->_api_interface->readAllPeople();
+        // turn each customer into a new person
         foreach($customers->Customer as $customer) {
-            $this->createPersonFromCustomer($customer);
+            $customer_xml = new SimpleXMLElement($customer->asXML());
+            $this->createPersonFromCustomer($customer_xml);
         }
+        // turn each person into a new customer
         foreach($people->person as $person) {
-            $this->createCustomerFromPerson($person);
+            $person_xml = new SimpleXMLElement($person->asXML());
+            $this->createCustomerFromPerson($person_xml);
         }
+        
+        // do something about any problems that were encountered?
     }
     
     
-    /** Syncs Customers and People that have been created or modified after $_last_synced_on
-     *  Does not check for duplicates.
+    /** Syncs Customers and People that have been created or modified after $_last_synced_on.
      */
     public function incrementalSync() {
         $customers_created_since = $this->_api_interface->readCustomersCreatedSince($this->_last_synced_on->getMerchantOSFormat());
@@ -135,12 +155,13 @@ class SyncAccount {
      * @return SimpleXMLElement $customer
      */
     public function createCustomerFromPerson($person) {
-        $new_customer = TransformXML::personToCustomer($person);
+        $new_customer = XMLTransformations::personToCustomer($person);
         try {
-            $customer = $this->_api_interface->createCustomer($new_people);
+            $customer = $this->_api_interface->createCustomer($new_customer);
             // put new MOS customer ID in Highrise custom field
+            $highrise_person_id = $person->id;
             $mos_customer_id = $customer->customerID;
-            $this->updatePersonWithCustomerID($person, $mos_customer_id);
+            $this->updatePersonWithCustomerID($highrise_person_id, $mos_customer_id);
         }
         catch (Exception $e) {
             $this->writeExceptionToLog($e);
@@ -150,11 +171,11 @@ class SyncAccount {
     
     
     /**
-     * @param type $person
-     * @return type 
+     * @param SimpleXMLElement $person
+     * @return SimpleXMLElement $customer
      */
     public function updateCustomerFromPerson($person) {
-        $updated_customer = TransformXML::personToCustomer($person);
+        $updated_customer = XMLTransformations::personToCustomer($person);
         foreach($person->subject_datas->subject_data as $subject_data) {
             if ($subject_data->subject_field_label == self::HIGHRISE_CUST_ID_FIELD_NAME) {
                 $customer_id = $subject_data->value;
@@ -175,7 +196,7 @@ class SyncAccount {
      * @return SimpleXMLElement $person
      */
     public function createPersonFromCustomer($customer) {
-        $new_person = TransformXML::customerToPerson($customer);
+        $new_person = XMLTransformations::customerToPerson($customer);
         try {
             $person = $this->_api_interface->createPerson($new_person);
         }
@@ -190,7 +211,7 @@ class SyncAccount {
      * @return SimpleXMLElement $person
      */
     public function updatePersonFromCustomer($customer) {
-        $updated_person = TransformXML::customerToPerson($customer);
+        $updated_person = XMLTransformations::customerToPerson($customer);
         try {
             $person_id = $this->_api_interface->findPersonFromCustomerID(self::HIGHRISE_CUST_ID_FIELD_NAME, $customer->customerID);
             $person = $this->_api_interface->updatePerson($person_id, $updated_person);
@@ -207,20 +228,12 @@ class SyncAccount {
      * @param int $mos_customer_id
      * @return SimpleXMLElement $updated_person
      */
-    public function updatePersonWithCustomerID($person, $mos_customer_id) {
-        $person_id = $person->id;
-        // find the custom field id number
-        foreach($person->subject_datas->subject_data as $subject_data) {
-            if ($subject_data->subject_field_label == self::HIGHRISE_CUST_ID_FIELD_NAME) {
-                $custom_field_id = $subject_data->value;
-                break;
-            }
-        }
-        $xml = '<person><subject_datas type="array"><subject_data><id type="integer">' . 
-                $custom_field_id . '</id><value>' . $mos_customer_id . 
-                '</value></subject_data></subject_datas></person>';
+    public function updatePersonWithCustomerID($highrise_person_id, $mos_customer_id) {
+       $update_xml = new SimpleXMLElement('<person><subject_datas type="array"><subject_data><subject_field_id type="integer">' . 
+                $this->_custom_field_id . '</subject_field_id><value>' . $mos_customer_id . 
+                '</value></subject_data></subject_datas></person>');
         try {
-            $updated_person = $this->_api_interface->updatePerson($person_id, $xml);
+            $updated_person = $this->_api_interface->updatePerson($highrise_person_id, $update_xml);
         }
         catch (Exception $e) {
             $this->writeExceptionToLog($e);
@@ -229,10 +242,11 @@ class SyncAccount {
     }
     
     
+    
     public function writeExceptionToLog($e) {
         // write SyncAccount idenitifying details and exception message to a log
         // depending on the type of exception, possibly notify the subscriber to the sync service?
-        
+        echo 'EXCEPTION: ' . $e->getMessage();
     }
     
      /** returns a string describing the values of each field

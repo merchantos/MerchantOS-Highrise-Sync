@@ -7,7 +7,7 @@
 
 require_once('HighriseAPICall.class.php');
 require_once('MOSAPICall.class.php');
-require_once('TransformXML.class.php');
+require_once('XMLTransformations.class.php');
 
 class APIInterface {
     protected $_mos_api_key;
@@ -49,6 +49,7 @@ class APIInterface {
         catch (Exception $e) {
             throw new Exception('APIInterface::defineCustomHighriseField error: ' . $e->getMessage());
         }
+        return $xml_response;
     }
     
     
@@ -89,7 +90,7 @@ class APIInterface {
                 }
                 else {
                     $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
-                    $all_customers = TransformXML::mergeXML($all_customers, $page);
+                    $all_customers = XMLTransformations::mergeXML($all_customers, $page);
                 }
                 $offset += self::MOS_CUSTOMERS_PER_PAGE;
             } while ($page->count() == self::MOS_CUSTOMERS_PER_PAGE);
@@ -107,7 +108,8 @@ class APIInterface {
      */
     public function readCustomersCreatedSince($datetime) {
         try {
-            $query_string = 'createTime=' . urlencode('>,' . $datetime);        
+            $query_string = 'createTime=' . urlencode('>,' . $datetime);
+            echo 'query_string = ', urldecode($query_string);
             $offset = 0;
             do {
                 $query_string .= '&limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=' . $offset;
@@ -116,7 +118,7 @@ class APIInterface {
                 }
                 else {
                     $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
-                    $customers_since = TransformXML::mergeXML($customers_since, $page);
+                    $customers_since = XMLTransformations::mergeXML($customers_since, $page);
                 }
                 $offset += self::MOS_CUSTOMERS_PER_PAGE;
             } WHILE ($page->count() == self::MOS_CUSTOMERS_PER_PAGE);
@@ -136,6 +138,7 @@ class APIInterface {
     public function readCustomersModifiedSince($datetime) {
         try {
             $query_string = 'timeStamp=' . urlencode('>,'. $datetime) . '&createTime=' . urlencode('<,' . $datetime);
+            echo 'query_string = ', urldecode($query_string);
             $offset = 0;
             do {
                 $query_string .= '&limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=' . $offset;
@@ -144,7 +147,7 @@ class APIInterface {
                 }
                 else {
                     $page = $this->_mos_api->makeAPICall('Account.Customer', 'Read', null, null, 'xml', $query_string);
-                    $customers_since = TransformXML::mergeXML($customers_since, $page);
+                    $customers_since = XMLTransformations::mergeXML($customers_since, $page);
                 }
                 $offset += self::MOS_CUSTOMERS_PER_PAGE;
             } WHILE ($page->count() == self::MOS_CUSTOMERS_PER_PAGE);
@@ -170,7 +173,7 @@ class APIInterface {
                 }
                 else {
                     $page = $this->_highrise_api->makeAPICall('people.xml?n=' . $offset, 'Read');
-                    $all_people = TransformXML::mergeXML($all_people, $page);
+                    $all_people = XMLTransformations::mergeXML($all_people, $page);
                 }
                 $offset += self::HIGHRISE_PERSONS_PER_PAGE;
             } while ($page->count() == self::HIGHRISE_PERSONS_PER_PAGE);
@@ -197,7 +200,7 @@ class APIInterface {
                 }
                 else {
                     $page = $this->_highrise_api->makeAPICall ('people.xml' . $query_string . '&n=' . $offset, $action);
-                    $people_since = TransformXML::mergeXML($people_since, $page);
+                    $people_since = XMLTransformations::mergeXML($people_since, $page);
                 }
 
             } while ($page->count() == self::HIGHRISE_PERSONS_PER_PAGE);

@@ -17,14 +17,8 @@ $api_interface = new APIInterface($mos_api_key, $mos_acct_id, $highrise_api_key,
 
 
 
-$since = new SyncDateTime('2012-05-08T00:00:00+00:00');
-echo 'Query date = ', $since->getMerchantOSFormat(), BR, BR;
-testReadCustomersSince($since);
-
-echo BR, BR;
-
-$since = new SyncDateTime('2012-05-07T00:00:00+00:00');
-echo 'Query date = ', $since->getMerchantOSFormat(), BR, BR;
+$since = new SyncDateTime('2012-05-08T21:10:00+00:00');
+echo 'query date = ' . $since->getDatabaseFormat(), BR, BR;
 testReadCustomersSince($since);
 
 
@@ -54,9 +48,7 @@ function testReadAllCustomers() {
     echo htmlentities($all_customers->asXML()), BR, BR;
 }
 
-// need to work on these two still
-// it's probable that MerchantOS's query doesn't compare hours/minutes/seconds
-// should MerchantOS change, or should the Sync application work around this limitation?
+// run successfully on 2012-05-09 (only without pagination)
 /**
  * @param SyncDateTime $since 
  */
@@ -65,11 +57,11 @@ function testReadCustomersSince($since) {
     
     echo 'APIInterface::readCustomersCreatedSince: ', BR;
     $customers_created_since = $api_interface->readCustomersCreatedSince($since->getMerchantOSFormat());
-    echo htmlentities($customers_created_since->asXML()), BR, BR;
+    echo BR, htmlentities($customers_created_since->asXML()), BR, BR;
 
     echo 'APIInterface::readCustomersModifiedSince: ', BR;
     $customers_modified_since = $api_interface->readCustomersModifiedSince($since->getMerchantOSFormat());
-    echo htmlentities($customers_modified_since->asXML()), BR, BR;
+    echo BR, htmlentities($customers_modified_since->asXML()), BR, BR;
 }
 
 // run successfully 2012-05-07 with and without pagination

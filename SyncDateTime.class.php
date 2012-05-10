@@ -29,8 +29,12 @@ class SyncDateTime {
      * @return string
      */
     public function getMerchantOSFormat() {
-        // ISO 8601
-        return $this->_datetime->format('c');
+        // MerchantOS seems to treat any UTC timezone notation (Z, +00:00) as Pacific Time
+        // hence this kind of kludgy fix to get an ISO-8601 string that will return the desired results
+        $this->_datetime->modify('-7 hours');
+        $formatted = $this->_datetime->format('c');
+        $this->_datetime->modify('+7 hours');
+        return $formatted;
     }
     
     /** gets the SyncDateTime in Highrise API format

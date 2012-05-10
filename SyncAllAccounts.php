@@ -13,6 +13,8 @@ require_once('Database.class.php');
 require_once('SyncAccount.class.php');
 
 $database = new Database();
+
+
 while ($row = $database->getNextSyncAccount()) {
     $acct = new SyncAccount($row['email_address'], $row['password'], $row['name'], 
             $row['mos_api_key'], $row['mos_acct_id'], $row['highrise_api_key'], 
@@ -21,8 +23,7 @@ while ($row = $database->getNextSyncAccount()) {
 
     $last_synced_on = $acct->sync();
     echo 'back in SyncAllAccounts, $last_synced_on=', $last_synced_on;
-    //$database->updateLastSyncedOn($row['id'], $last_synced_on);
-    
+    $database->updateLastSyncedOn($row['id'], $last_synced_on);
     
 }
 

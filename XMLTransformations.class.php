@@ -7,14 +7,14 @@
  * @author Erika Ellison
  */
 
-class TransformXML {
+class XMLTransformations {
     
     /** Transforms a Customer XML document to a Person XML document.
      * @param SimpleXMLElement $customer_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customer schema
      * @return SimpleXMLElement $people_xml a SimpleXMLElement representing a well-formed XML document in the Highrise Person schema
      */
     public static function customerToPerson($customer_xml) {
-        $person_xml = TransformXML::transform($customer_xml, 'customerToPerson.xsl');
+        $person_xml = XMLTransformations::transform($customer_xml, 'customerToPerson.xsl');
         return $person_xml;
     }
     
@@ -23,7 +23,7 @@ class TransformXML {
      * @return SimpleXMLElement $customer_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customer schema
      */
     public static function personToCustomer($person_xml) {
-        $customer_xml = TransformXML::transform($person_xml, 'personToCustomer.xsl');
+        $customer_xml = XMLTransformations::transform($person_xml, 'personToCustomer.xsl');
         return $customer_xml;
     }
     
@@ -56,7 +56,9 @@ class TransformXML {
         $processor = new XSLTProcessor();        
         $stylesheet = simplexml_load_file($rules_filename);        
         $processor->importStylesheet($stylesheet);
-        $new_xml = new SimpleXMLElement($processor->transformToXML($original_xml));
+        $new_xml_string = $processor->transformToXML($original_xml);
+        echo htmlentities($new_xml_string), '<br /><br />';
+        $new_xml = new SimpleXMLElement($new_xml_string);
         return $new_xml;
     }
 
