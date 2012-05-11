@@ -13,8 +13,13 @@ class XMLTransformations {
      * @param SimpleXMLElement $customer_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customer schema
      * @return SimpleXMLElement $people_xml a SimpleXMLElement representing a well-formed XML document in the Highrise Person schema
      */
-    public static function customerToPerson($customer_xml) {
+    public static function customerToPerson($customer_xml, $custom_field_id) {
         $person_xml = XMLTransformations::transform($customer_xml, 'customerToPerson.xsl');
+        $custom_field_xml = new SimpleXMLElement('<person><subject_datas type="array"><subject_data><subject_field_id>' . 
+                $custom_field_id . '</subject_field_id><value>' . 
+                $customer_xml->customerID . '</value></subject_data></subject_datas></person>');
+        $person_xml = XMLTransformations::mergeXML($person_xml, $custom_field_xml);
+        
         return $person_xml;
     }
     
@@ -57,7 +62,6 @@ class XMLTransformations {
         $stylesheet = simplexml_load_file($rules_filename);        
         $processor->importStylesheet($stylesheet);
         $new_xml_string = $processor->transformToXML($original_xml);
-        echo htmlentities($new_xml_string), '<br /><br />';
         $new_xml = new SimpleXMLElement($new_xml_string);
         return $new_xml;
     }

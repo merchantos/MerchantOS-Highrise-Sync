@@ -109,7 +109,6 @@ class APIInterface {
     public function readCustomersCreatedSince($datetime) {
         try {
             $query_string = 'createTime=' . urlencode('>,' . $datetime);
-            echo 'query_string = ', urldecode($query_string);
             $offset = 0;
             do {
                 $query_string .= '&limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=' . $offset;
@@ -138,7 +137,6 @@ class APIInterface {
     public function readCustomersModifiedSince($datetime) {
         try {
             $query_string = 'timeStamp=' . urlencode('>,'. $datetime) . '&createTime=' . urlencode('<,' . $datetime);
-            echo 'query_string = ', urldecode($query_string);
             $offset = 0;
             do {
                 $query_string .= '&limit=' . self::MOS_CUSTOMERS_PER_PAGE . '&offset=' . $offset;

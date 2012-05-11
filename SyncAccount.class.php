@@ -196,7 +196,7 @@ class SyncAccount {
      * @return SimpleXMLElement $person
      */
     public function createPersonFromCustomer($customer) {
-        $new_person = XMLTransformations::customerToPerson($customer);
+        $new_person = XMLTransformations::customerToPerson($customer, $this->_custom_field_id);
         try {
             $person = $this->_api_interface->createPerson($new_person);
         }
@@ -211,10 +211,15 @@ class SyncAccount {
      * @return SimpleXMLElement $person
      */
     public function updatePersonFromCustomer($customer) {
-        $updated_person = XMLTransformations::customerToPerson($customer);
+        $updated_person = XMLTransformations::customerToPerson($customer, $this->_custom_field_id);
         try {
             $person_id = $this->_api_interface->findPersonFromCustomerID(self::HIGHRISE_CUST_ID_FIELD_NAME, $customer->customerID);
-            $person = $this->_api_interface->updatePerson($person_id, $updated_person);
+            if (!$person_id) {
+                echo 'well shit';
+            }
+            else {
+                $person = $this->_api_interface->updatePerson($person_id, $updated_person);
+            }
         }
         catch (Exception $e) {
             $this->writeExceptionToLog($e);
@@ -240,8 +245,7 @@ class SyncAccount {
         }
         return $updated_person;
     }
-    
-    
+        
     
     public function writeExceptionToLog($e) {
         // write SyncAccount idenitifying details and exception message to a log

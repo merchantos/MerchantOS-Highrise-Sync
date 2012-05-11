@@ -50,21 +50,13 @@
                         <city><xsl:value-of select="city" /></city>
                         <country><xsl:value-of select="country" /></country>
                         <state><xsl:value-of select="state" /></state>
-                        <street><xsl:value-of select="address1" />, <xsl:value-of select="address2" /></street>
+                        <street><xsl:value-of select="address1" /> <xsl:value-of select="address2" /></street>
                         <zip><xsl:value-of select="zip" /></zip>
                         <location>Work</location>
                     </address>
                 </xsl:for-each>
                 </addresses>
             </contact-data>
-
-            <!-- custom fields -->
-            <subject_datas type="array">
-                <subject_data>
-                    <subject_field_label>merchantos-customerid</subject_field_label>
-                    <value><xsl:value-of select="customerID" /></value>
-                </subject_data>
-            </subject_datas>
 
         </person>
     </xsl:template>

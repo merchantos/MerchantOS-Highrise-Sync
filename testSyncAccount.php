@@ -12,14 +12,18 @@ $mos_acct_id = 39184;
 $highrise_api_key = '0f5b609203e0f9b3af5d4325215876d2';
 $highrise_username = 'merchantosintern';
 
+
+
+$since = '2012-05-11 22:06:40';
+
 $sync_acct = new SyncAccount($mos_api_key, $mos_acct_id, 
         $highrise_api_key, $highrise_username, 
         null, null, null, 
-        597843, null, null);
+        597843, null, $since);
 
 
 
-
+testIncrementalSync($since);
 
 // run successfully 2012-05-10
 function testUpdatePersonWithCustomerID($person_id, $customer_id) {
@@ -55,19 +59,28 @@ function testInitialSync() {
     $sync_acct->initialSync();
 }
 
-
+// run successfully 2012-05-11
 function testUpdateCustomerFromPerson() {
-    
+    global $sync_acct;
+    echo 'SyncAccount::updateCustomerFromPerson: ', BR;
+    $person = new SimpleXMLElement('<person><author-id type="integer">708166</author-id><background>Background2.</background><company-id type="integer">116624966</company-id><created-at type="datetime">2012-05-02T19:24:50Z</created-at><first-name>UpdatedPerson2</first-name><group-id type="integer" nil="true"/><id type="integer">116196202</id><last-name>UpdatedPerson2</last-name><owner-id type="integer" nil="true"/><title>Title2</title><updated-at type="datetime">2012-05-11T20:28:22Z</updated-at><visible-to>Everyone</visible-to><company-name>Company2</company-name><avatar-url>http://asset0.37img.com/highrise/missing/avatar.gif?r=3</avatar-url><contact-data><email-addresses type="array"/><instant-messengers type="array"/><phone-numbers type="array"/><twitter-accounts type="array"/><web-addresses type="array"/><addresses type="array"/></contact-data><subject_datas type="array"><subject_data><id type="integer">39316605</id><subject_field_id type="integer">599887</subject_field_id><subject_field_label>merchantos_customerid</subject_field_label><value>717</value></subject_data></subject_datas></person>');
+    $customer = $sync_acct->updateCustomerFromPerson($person);
+    echo htmlentities($customer->asXML()), BR, BR;
 }
 
 
-
-function testUpdatePersonFromCustomer($customer) {
-    
+function testUpdatePersonFromCustomer() {
+    global $sync_acct;
+    echo 'SyncAccount::updatePersonFromCustomer: ', BR;
+    $customer = new SimpleXMLElement('<Customer><customerID>549</customerID><firstName>UpdatedCustomer3</firstName><lastName>UpdatedCustomer3</lastName><archived>false</archived><title>Title3</title><company>CompanyName3</company><createTime>2012-05-02T16:09:12+00:00</createTime><timeStamp>2012-05-11T20:27:54+00:00</timeStamp><creditAccountID>0</creditAccountID><customerTypeID>0</customerTypeID><discountID>0</discountID><taxCategoryID>0</taxCategoryID><Contact><custom/><noEmail>false</noEmail><noPhone>false</noPhone><noMail>false</noMail><timeStamp>2012-05-11T20:27:54+00:00</timeStamp><Addresses><ContactAddress><city>City3</city><state>State3</state><zip>Zip3</zip><country>Country3</country></ContactAddress></Addresses><Phones><ContactPhone><number>333-333-3331</number><useType readonly="true">Home</useType></ContactPhone><ContactPhone><number>333-333-3332</number><useType readonly="true">Work</useType></ContactPhone><ContactPhone><number>333-333-3333</number><useType readonly="true">Pager</useType></ContactPhone><ContactPhone><number>333-333-3334</number><useType readonly="true">Mobile</useType></ContactPhone><ContactPhone><number>333-333-3335</number><useType readonly="true">Fax</useType></ContactPhone></Phones><Emails><ContactEmail><address>primary3@domain.tld</address><useType readonly="true">Primary</useType></ContactEmail><ContactEmail><address>secondary3@domain.tld</address><useType readonly="true">Secondary</useType></ContactEmail></Emails><Websites><ContactWebsite><url>www.3.com</url></ContactWebsite></Websites></Contact><Note><note>Note3</note><isPublic>true</isPublic><timeStamp>2012-05-11T20:27:54+00:00</timeStamp></Note></Customer>');
+    $person = $sync_acct->updatePersonFromCustomer($customer);
+    echo htmlentities($person->asXML()), BR, BR;
 }
 
 function testIncrementalSync() {
-    
+    global $sync_acct;
+    echo 'SyncAccount::incrementalSync: ', BR;
+    $sync_acct->incrementalSync();
 }
 
 function testSync() {
