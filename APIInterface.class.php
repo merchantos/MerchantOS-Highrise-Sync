@@ -37,9 +37,66 @@ class APIInterface {
         $this->_highrise_api = new HighriseAPICall($this->_highrise_api_key, $this->_highrise_username);
     }
     
+    /**
+     * @return boolean $credentials_valid
+     * @throws Exception 
+     */
+    public function hasValidCredentialsHighrise() {
+        $credentials_valid = false;
+        if ($this->_highrise_api_key && $this->_highrise_username) {
+            $credentials_valid = true;
+            try {
+                $result = $this->_highrise_api->makeAPICall('account.xml', 'Read');
+            }
+            catch (Exception $e) {
+                if (strpos($e->getMessage(), 'HTTP Basic: Access denied') !== FALSE) {
+                    // good username, bad API key
+                    $credentials_valid = false;
+                }
+                else {
+                    // check for difference between bad username and other exception
+                    $error = $e->getMessage();
+                    $error = str_replace('Highrise API Call Error: String could not be parsed as XML, Response: ', '', $error);
+                    if ($error == ' ') {
+                        // bad username
+                        $credentials_valid = false;
+                    }
+                    else {
+                        // some exception possibly unrelated to whether or not credentials are valid
+                        throw new Exception('APIInterface::testCredentialsHighrise Error: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
+        return $credentials_valid;
+    }
+    
+    
+    /**
+     * @return boolean $credentials_valid
+     * @throws Exception 
+     */
+    public function hasValidCredentialsMerchantOS() {
+        $credentials_valid = false;
+        if ($this->_mos_api_key && $this->_mos_acct_id) {
+            $credentials_valid = true;
+            try {
+                $result = $this->_mos_api->makeAPICall('Account', 'Read');
+                if ($result->httpCode == 401) {
+                    $credentials_valid = false;
+                }
+            }
+            catch (Exception $e) {
+                throw new Exception('APIInterface::testCredentialsMerchantOS Error: ' . $e->getMessage());
+            }
+        }
+        return $credentials_valid;
+    }
+    
     /** creates a new custom field in Highrise for people to use
      * @param string $label_name the name the custom field should have
      * @return SimpleXMLElement $custom_field
+     * @throws Exception
      */
     public function defineCustomHighriseField($label_name) {
         $custom_field_xml = '<subject-field><label>' . $label_name . '</label></subject-field>';
@@ -56,27 +113,27 @@ class APIInterface {
     /** finds the ID of the first person found in Highrise that has the given MerchantOS customer ID
      * @param int/string $customer_id
      * @return int/string $person_id
+     * @throws Exception
      */
     public function findPersonFromCustomerID($custID_field_name, $customer_id) {
         $search_url = 'people/search.xml?criteria[' . $custID_field_name . ']=' . $customer_id;
         try {
             $result = $this->_highrise_api->makeAPICall($search_url, 'Read');
-            if ($result->count() == 0) {
-                $person_id = false;
-            }
-            else {
+            $person_id = false;
+            if ($result->count() != 0) {
                 $person_id = (string) $result->person[0]->id;
             }
-            return $person_id;
         }
         catch (Exception $e) {
             throw new Exception('APIInterface::findPersonFromCustomerID error: ' . $e->getMessage());
         }
+        return $person_id;
     }
     
     
     /** reads all Customers in MerchantOS
      * @return SimpleXMLElement $all_customers
+     * @throws Exception
      */
     public function readAllCustomers() {
         try {
@@ -97,7 +154,7 @@ class APIInterface {
             return $all_customers;
         }
         catch (Exception $e) {
-            throw new Exception('APIInterface::readAllCustomers error: ' . $e->getMessage());
+            throw new Exception('APIInterface::readAllCustomers error: query_string=' . $query_string . '; ' . $e->getMessage());
         }
     }
     
@@ -105,6 +162,7 @@ class APIInterface {
     /** Reads all People that have been created since the datetime given.
      * @param string $datetime in MerchantOS format
      * @return SimpleXMLElement $customers_since
+     * @throws Exception
      */
     public function readCustomersCreatedSince($datetime) {
         try {
@@ -125,7 +183,7 @@ class APIInterface {
             return $customers_since;
         }
         catch (Exception $e) {
-            throw new Exception('APIInterface::readCustomersSince error: ' . $e->getMessage());
+            throw new Exception('APIInterface::readCustomersSince error: query_string=' . $query_string . '; ' . $e->getMessage());
         }
     }
     
@@ -133,6 +191,7 @@ class APIInterface {
     /** Reads all People that have been modified since the datetime given.
      * @param string $datetime in MerchantOS format
      * @return SimpleXMLElement $customers_since
+     * @throws Exception
      */
     public function readCustomersModifiedSince($datetime) {
         try {
@@ -153,13 +212,14 @@ class APIInterface {
             return $customers_since;
         }
         catch (Exception $e) {
-            throw new Exception('APIInterface::readCustomersSince error: ' . $e->getMessage());
+            throw new Exception('APIInterface::readCustomersSince error: query_string=' . $query_string . '; ' . $e->getMessage());
         }
     }
     
     
     /** reads all People in Highrise
      * @return SimpleXMLElement $all_people
+     * @throws Exception
      */
     public function readAllPeople() {
         try {
@@ -187,6 +247,7 @@ class APIInterface {
     /** Reads all People that have been created or modified since the datetime given.
      * @param string $datetime in Highrise format
      * @return SimpleXMLElement $people_since
+     * @throws Exception
      */
     public function readPeopleSince($datetime) {        
         try {
@@ -206,7 +267,7 @@ class APIInterface {
             return $people_since;
         }
         catch (Exception $e) {
-            throw new Exception('APIInterface::readPeopleSince error: ' . $e->getMessage());
+            throw new Exception('APIInterface::readPeopleSince error: query_string=' . $query_string . ' ; ' . $e->getMessage());
         }
     }
     
@@ -214,6 +275,7 @@ class APIInterface {
     /** Creates a customer in MerchantOS
      * @param SimpleXMLElement $customer the xml of the customer to be created
      * @return SimpleXMLElement $customer_xml the created customer's xml
+     * @throws Exception
      */
     public function createCustomer($customer) {
         try {
@@ -230,6 +292,7 @@ class APIInterface {
      * @param int $customer_id
      * @param SimpleXMLElement $update_xml the XML to update the customer with
      * @return SimpleXMLElement $updated the updated XML of the customer
+     * @throws Exception
      */
     public function updateCustomer($customer_id, $update_xml) {
         try {
@@ -245,6 +308,7 @@ class APIInterface {
     /** Creates a person in Highrise
      * @param SimpleXMLElement $person the xml of the person to be created
      * @return SimpleXMLElement $person_xml the created person's xml
+     * @throws Exception
      */
     public function createPerson($person) {
         try {
@@ -262,6 +326,7 @@ class APIInterface {
      * @param int $person_id
      * @param SimpleXMLElement $update_xml the XML to update the person with
      * @return SimpleXMLElement $updated the updated XML of the person
+     * @throws Exception
      */
     public function updatePerson($person_id, $update_xml) {
         try {
@@ -270,25 +335,6 @@ class APIInterface {
         }
         catch (Exception $e) {
             throw new Exception('APIInterface::updatePerson error: ' . $e->getMessage());
-        }
-    }
-    
-
-    
-
-    
-    
-    /** Archives all customers in the MerchantOS account, not meant to be used for anything but testing.
-     */
-    public function archiveAllCustomers($begin, $end) {
-        for($i = $begin; $i <= $end; $i += 2) {
-            $result = $this->_mos_api->makeAPICall('Account.Customer', 'Delete', $i);
-            echo htmlentities($result->asXML()), '<br />';
-            usleep(1500000); // gets around the 60 requests per minute limit...takes longer, but doesn't get interrupted this way
-            if ($result->httpCode == 503) {
-                echo 'archiveAllCustomers quitting early.';
-                break;
-            }
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+//error_reporting(E_ALL);
+//ini_set('display_errors', '1');
 
 require_once('SyncAccount.class.php');
 define('BR', '<br />');
@@ -23,7 +23,18 @@ $sync_acct = new SyncAccount($mos_api_key, $mos_acct_id,
 
 
 
-testIncrementalSync($since);
+// run successfully 2012-05-15
+function testHasValidCredentials() {
+    global $sync_acct;
+    $both_valid = $sync_acct->hasValidCredentials();
+    if ($both_valid) {
+        echo 'both are valid';
+    }
+    else {
+        echo 'one or more is invalid';
+    }
+}
+
 
 // run successfully 2012-05-10
 function testUpdatePersonWithCustomerID($person_id, $customer_id) {
@@ -86,10 +97,5 @@ function testIncrementalSync() {
 function testSync() {
     
 }
-
-
-
-
-
 
 ?>

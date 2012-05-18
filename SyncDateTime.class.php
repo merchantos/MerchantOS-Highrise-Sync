@@ -1,9 +1,7 @@
 <?php
 
 /**
- * SyncDate, a wrapper class for datetimes
- * 
- *
+ * SyncDateTime, a wrapper class for datetimes used in MerchantOS-Highrise-Sync
  * @author Erika Ellison
  */
 class SyncDateTime {
@@ -14,7 +12,12 @@ class SyncDateTime {
      * if $datetime is omitted, the SyncDateTime constructed will have a datetime value of "now"
      */
     public function __construct($datetime=null) {
-        $this->_datetime = new DateTime($datetime, new DateTimeZone('UTC'));
+        try {
+            $this->_datetime = new DateTime($datetime, new DateTimeZone('UTC'));
+        }
+        catch (Exception $e) {
+            throw new Exception('SyncDateTime::construct error: ' . $e->getMessage());
+        }
     }
     
     /** gets the SyncDateTime in Database format
@@ -49,7 +52,7 @@ class SyncDateTime {
      * @return int 
      */
     public function getInt() {
-        // returns an int representing the Unix timestamp, for easier comparisons
+        // returns an int representing the Unix timestamp, for easier comparisons of SyncDateTime instances
         return $this->_datetime->format('U');
     }
 }

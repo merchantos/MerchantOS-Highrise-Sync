@@ -1,7 +1,7 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+//error_reporting(E_ALL);
+//ini_set('display_errors', '1');
 
 require_once('APIInterface.class.php');
 require_once('SyncDateTime.class.php');
@@ -17,10 +17,33 @@ $api_interface = new APIInterface($mos_api_key, $mos_acct_id, $highrise_api_key,
 
 
 
-$since = new SyncDateTime('2012-05-08T21:10:00+00:00');
-echo 'query date = ' . $since->getDatabaseFormat(), BR, BR;
-testReadCustomersSince($since);
 
+
+
+// run successfully 2012-05-15
+function testHasValidCredentialsMerchantOS() {
+    global $api_interface;
+    $valid_credentials = $api_interface->hasValidCredentialsMerchantOS();
+    if ($valid_credentials === true) {
+        echo 'valid MerchantOS credentials';
+    }
+    else {
+        echo 'invalid MerchantOS credentials';
+    } 
+}
+
+
+// run successfully 2012-05-15
+function testHasValidCredentialsHighrise() {
+    global $api_interface;
+    $valid_credentials = $api_interface->hasValidCredentialsHighrise();
+    if ($valid_credentials === true) {
+        echo 'valid Highrise credentials';
+    }
+    else {
+        echo 'invalid Highrise credentials';
+    }
+}
 
 
 // run successfully 2012-05-07
