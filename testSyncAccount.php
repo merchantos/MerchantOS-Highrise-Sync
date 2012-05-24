@@ -1,7 +1,7 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
 require_once('SyncAccount.class.php');
 define('BR', '<br />');
@@ -19,8 +19,23 @@ $since = '2012-05-11 22:06:40';
 $sync_acct = new SyncAccount($mos_api_key, $mos_acct_id, 
         $highrise_api_key, $highrise_username, 
         null, null, null, 
-        597843, null, $since);
+        597843, 81, $since);
 
+
+testLogException();
+
+// run successfully 2012-05-24
+function testLogException() {
+    global $sync_acct;
+    echo exec('whoami') . '<br />';
+    echo 'Id: ' . getmyuid() . '<br />';
+    echo 'Gid: ' . getmygid() . '<br />';
+    echo '<br />';
+    
+    $e = new Exception('some test exception');
+    $fake_data = new SimpleXMLElement('<person><author-id type="integer">708166</author-id><background>Background1</background><company-id type="integer">116624952</company-id><created-at type="datetime">2012-05-02T22:50:40Z</created-at><first-name>FirstNamePerson1</first-name><group-id type="integer" nil="true"/><id type="integer">116232574</id><last-name>LastNamePerson1</last-name><owner-id type="integer" nil="true"/><title>Title1</title><updated-at type="datetime">2012-05-24T19:47:49Z</updated-at><visible-to>Everyone</visible-to><company-name>Company1</company-name><avatar-url>http://asset0.37img.com/highrise/missing/avatar.gif?r=3</avatar-url><contact-data><email-addresses type="array"/><instant-messengers type="array"/><phone-numbers type="array"/><addresses type="array"/><twitter-accounts type="array"/><web-addresses type="array"/></contact-data></person>');
+    $sync_acct->logException($e, $fake_data->asXML());
+}
 
 
 // run successfully 2012-05-15

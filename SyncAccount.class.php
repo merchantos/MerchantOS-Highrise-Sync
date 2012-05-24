@@ -189,7 +189,7 @@ class SyncAccount {
             $this->updatePersonWithCustomerID($highrise_person_id, $mos_customer_id);
         }
         catch (Exception $e) {
-            $this->logException(new Exception ('createCsutomerFromPerson Error: ' . $e->getMessage()));
+            $this->logException(new Exception ('createCustomerFromPerson Error: ' . $e->getMessage()), $person->asXML());
         }
         return $customer;
     }
@@ -211,7 +211,7 @@ class SyncAccount {
             $customer = $this->_api_interface->updateCustomer($customer_id, $updated_customer);
         }
         catch (Exception $e) {
-            $this->logException(new Exception('updateCustomerFromPerson Error: ' . $e->getMessage()));
+            $this->logException(new Exception('updateCustomerFromPerson Error: ' . $e->getMessage()), $person->asXML());
         }
         return $customer;
     }
@@ -226,7 +226,7 @@ class SyncAccount {
             $person = $this->_api_interface->createPerson($new_person);
         }
         catch (Exception $e) {
-            $this->logException(new Exception('createPersonFromCustomer Error: ' . $e->getMessage()));
+            $this->logException(new Exception('createPersonFromCustomer Error: ' . $e->getMessage()), $customer->asXML());
         }
         return $person;
     }
@@ -250,7 +250,7 @@ class SyncAccount {
             }
         }
         catch (Exception $e) {
-            $this->logException(new Exception('updatePersonFromCustomer Error: ' . $e->getMessage()));
+            $this->logException(new Exception('updatePersonFromCustomer Error: ' . $e->getMessage()), $customer->asXML());
         }
         return $person;
     }
@@ -269,26 +269,34 @@ class SyncAccount {
             $updated_person = $this->_api_interface->updatePerson($highrise_person_id, $update_xml);
         }
         catch (Exception $e) {
-            $this->logException(new Exception('updatePersonWithCustomerID Error: ' . $e->getMessage()));
+            $data_involved = 'highrise_person_id = ' . $highrise_person_id . ' mos_customer_id = ' . $mos_customer_id;
+            $this->logException(new Exception('updatePersonWithCustomerID Error: ' . $e->getMessage()), $data_involved);
         }
         return $updated_person;
     }
         
     /**
      * @param Exception $e 
-     * @param  $data_involved
+     * @param string $data_involved
      */
     public function logException($e, $data_involved=NULL) {
-        // write date, SyncAccount id, and exception message to a log   
+        // write date, SyncAccount id, exception message and any data involved in the exception to a log   
         $now = new SyncDateTime();
         $acct_id = $this->_id;
         $exception_message = 'SyncAccount::' . $e->getMessage();
 
-        $string = $now . ' ACCT_ID: ' . $acct_id . ' DESCRIPTION: ' . $exception_message . '\n\n';
-        $filename = 'error_log.txt';
+        $string = $now->getMerchantOSFormat() . "\nACCT_ID: " . $this->_id . "\nDESCRIPTION: " . $exception_message;
+        if ($data_involved) {
+            $string .= "\nDATA_INVOLVED: " . $data_involved;
+        }
+        $string .= "\n\n";
+        
+        $filename = $_SERVER['DOCUMENT_ROOT'] . '/MerchantOS-Highrise-Sync/error_log.txt';
         $f = fopen($filename, "a");
-        fwrite($f, $string);
-        fclose($f);
+        if ($f) {
+            fwrite($f, $string);
+            fclose($f);
+        }
     }
     
     
