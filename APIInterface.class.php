@@ -54,11 +54,11 @@ class APIInterface {
                     $credentials_valid = false;
                 }
                 else {
-                    // check for difference between bad username and other exception
+                    // check for difference between exception caused by bad username and exception caused by something else
                     $error = $e->getMessage();
                     $error = str_replace('Highrise API Call Error: String could not be parsed as XML, Response: ', '', $error);
                     if ($error == ' ') {
-                        // bad username
+                        // bad url because username does not exist in Highrise
                         $credentials_valid = false;
                     }
                     else {

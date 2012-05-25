@@ -1,28 +1,24 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+//error_reporting(E_ALL);
+//ini_set('display_errors', '1');
 
-require_once('SyncAccount.class.php');
 define('BR', '<br />');
 
-// account info to use for testing
-$mos_api_key = 'd95cf22bca845c8444715cc8e1840145e148bfaac16bd8eeaf7de66131e13eb4';
-$mos_acct_id = 39184;
-$highrise_api_key = '0f5b609203e0f9b3af5d4325215876d2';
-$highrise_username = 'merchantosintern';
+require_once('SyncAccount.class.php');
+require_once('SyncAccountDAO.class.php');
+
+$dao = new SyncAccountDAO();
+
+$all_accounts = $dao->getAllSyncAccounts();
+
+foreach($all_accounts as $account) {
+    echo $account->getName(), ': ';
+    testHasValidCredentials($account);
+    echo BR;   
+}
 
 
-
-$since = '2012-05-11 22:06:40';
-
-$sync_acct = new SyncAccount($mos_api_key, $mos_acct_id, 
-        $highrise_api_key, $highrise_username, 
-        null, null, null, 
-        597843, 81, $since);
-
-
-testLogException();
 
 // run successfully 2012-05-24
 function testLogException() {
@@ -38,15 +34,18 @@ function testLogException() {
 }
 
 
-// run successfully 2012-05-15
-function testHasValidCredentials() {
-    global $sync_acct;
-    $both_valid = $sync_acct->hasValidCredentials();
-    if ($both_valid) {
-        echo 'both are valid';
+// run successfully 
+function testHasValidCredentials($sync_acct) {
+    $mos = $sync_acct->hasValidCredentialsMerchantOS();
+    $highrise = $sync_acct->hasValidCredentialsHighrise();
+    if ($mos && $highrise) {
+        echo 'both credentials valid';
     }
-    else {
-        echo 'one or more is invalid';
+    else if (!$mos) {
+        echo 'MerchantOS credentials invalid';
+    }
+    else { // !$highrise
+        echo 'Highrise credentials invalid';
     }
 }
 

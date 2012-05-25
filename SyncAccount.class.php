@@ -79,7 +79,7 @@ class SyncAccount {
      */
     public function sync() {
         $was_synced = false;
-        if ($this->hasValidCredentials()) {
+        if ($this->hasValidCredentialsMerchantOS() && $this->hasValidCredentialsHighrise()) {
             if (!(isset($this->_last_synced_on))) {
                 $this->initialSync();
             }
@@ -106,22 +106,32 @@ class SyncAccount {
         return $was_saved;
     }
 
-
     /**
-     * @return boolean $both_valid
+     * @return boolean $valid 
      */
-    public function hasValidCredentials() {
-        $mos = false;
-        $highrise = false;
+    public function hasValidCredentialsMerchantOS() {
+        $valid = false;
         try {
-            $mos = $this->_api_interface->hasValidCredentialsMerchantOS();
-            $highrise = $this->_api_interface->hasValidCredentialsHighrise();
+            $valid = $this->_api_interface->hasValidCredentialsMerchantOS();
         }
         catch (Exception $e) {
-            $this->logException(new Exception('hasValidCredentials Error: ' . $e->getMessage()));
+            $this->logException(new Exception('hasValidCredentialsMerchantOS Error: ' . $e->getMessage()));
         }
-        $both_valid = ($highrise && $mos);
-        return $both_valid;
+        return $valid;
+    }
+
+    /**
+     * @return boolean $valid 
+     */
+    public function hasValidCredentialsHighrise() {
+        $valid = false;
+        try {
+            $valid = $this->_api_interface->hasValidCredentialsHighrise();
+        }
+        catch (Exception $e) {
+            $this->logException(new Exception('hasValidCredentialsHighrise Error: ' . $e->getMessage()));
+        }
+        return $valid;
     }
     
     /** Copies all Customers in MerchantOS to Highrise, and all People in Highrise to MerchantOS

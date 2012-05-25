@@ -13,16 +13,19 @@ $all_accounts = $dao->getAllSyncAccounts();
 foreach($all_accounts as $account) {
     echo $account->toString();
     if ($account->getID() != 0) {
-        echo 'attempting to sync ' , $account->getName(), '<br />';
-        echo time();
+        echo 'Attempting to sync account ' , $account->getID(), '<br />';
+        
+        $started = time();
         $was_synced = $account->sync();
-        echo time();
-        $report = $account->getName() . '\'s account was ';
+        $finished = time();
+        $time_taken = $finished - $started;
+        
+        $message = 'Account ' . $account->getID() . ' was ';
         if (!$was_synced) {
-            $report .= 'NOT ';
+            $message .= 'NOT ';
         }
-        $report .= 'synced.<br />';
-        echo $report;
+        $message .= 'synced in ' . $time_taken . ' seconds.<br />';
+        echo $message;
     }
     echo '<br /><br />';
 }
