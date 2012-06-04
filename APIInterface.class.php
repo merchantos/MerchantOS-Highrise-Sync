@@ -1,7 +1,6 @@
 <?php
 /**
  * APIInterface provides a wrapper for calls to MerchantOS or Highrise.
- *
  * @author Erika Ellison
  */
 
@@ -9,6 +8,10 @@ require_once('HighriseAPICall.class.php');
 require_once('MOSAPICall.class.php');
 require_once('XMLTransformations.class.php');
 
+/** 
+ * APIInterface class
+ * @author Erika Ellison
+ */
 class APIInterface {
     protected $_mos_api_key;
     protected $_mos_acct_id;
@@ -21,7 +24,8 @@ class APIInterface {
     const HIGHRISE_PERSONS_PER_PAGE = 500;
     const MOS_CUSTOMERS_PER_PAGE = 100;
     
-    /** Creates a new APIInterface
+    /**
+     * Creates a new APIInterface
      * @param string $mos_api_key
      * @param string/int $mos_acct_id
      * @param string $highrise_api_key
@@ -38,6 +42,7 @@ class APIInterface {
     }
     
     /**
+     * Checks for valid Highrise API credentials
      * @return boolean $credentials_valid
      * @throws Exception 
      */
@@ -73,6 +78,7 @@ class APIInterface {
     
     
     /**
+     * Checks for valid MerchantOS API credentials
      * @return boolean $credentials_valid
      * @throws Exception 
      */
@@ -93,7 +99,8 @@ class APIInterface {
         return $credentials_valid;
     }
     
-    /** creates a new custom field in Highrise for people to use
+    /**
+     * Creates a new custom field in Highrise
      * @param string $label_name the name the custom field should have
      * @return SimpleXMLElement $custom_field
      * @throws Exception
@@ -110,7 +117,8 @@ class APIInterface {
     }
     
     
-    /** finds the ID of the first person found in Highrise that has the given MerchantOS customer ID
+    /**
+     * finds the ID of the first person in Highrise associated with a given MerchantOS customer ID
      * @param int/string $customer_id
      * @return int/string $person_id
      * @throws Exception
@@ -131,7 +139,8 @@ class APIInterface {
     }
     
     
-    /** reads all Customers in MerchantOS
+    /**
+     * reads all Customers in MerchantOS
      * @return SimpleXMLElement $all_customers
      * @throws Exception
      */
@@ -159,7 +168,8 @@ class APIInterface {
     }
     
 
-    /** Reads all People that have been created since the datetime given.
+    /**
+     * Reads all People that have been created since the datetime given
      * @param string $datetime in MerchantOS format
      * @return SimpleXMLElement $customers_since
      * @throws Exception
@@ -188,7 +198,8 @@ class APIInterface {
     }
     
     
-    /** Reads all People that have been modified since the datetime given.
+    /**
+     * Reads all People that have been modified since the datetime given
      * @param string $datetime in MerchantOS format
      * @return SimpleXMLElement $customers_since
      * @throws Exception
@@ -217,7 +228,8 @@ class APIInterface {
     }
     
     
-    /** reads all People in Highrise
+    /**
+     * Reads all People in Highrise
      * @return SimpleXMLElement $all_people
      * @throws Exception
      */
@@ -244,7 +256,8 @@ class APIInterface {
     }
     
     
-    /** Reads all People that have been created or modified since the datetime given.
+    /**
+     * Reads all People that have been created or modified since the datetime given
      * @param string $datetime in Highrise format
      * @return SimpleXMLElement $people_since
      * @throws Exception
@@ -272,7 +285,8 @@ class APIInterface {
     }
     
     
-    /** Creates a customer in MerchantOS
+    /**
+     * Creates a customer in MerchantOS using the given XML
      * @param SimpleXMLElement $customer the xml of the customer to be created
      * @return SimpleXMLElement $customer_xml the created customer's xml
      * @throws Exception
@@ -288,7 +302,8 @@ class APIInterface {
     }
     
 
-    /** Updates a customer in MerchantOS with the given XML.
+    /**
+     * Updates a customer in MerchantOS using the given XML
      * @param int $customer_id
      * @param SimpleXMLElement $update_xml the XML to update the customer with
      * @return SimpleXMLElement $updated the updated XML of the customer
@@ -305,7 +320,8 @@ class APIInterface {
     }
 
     
-    /** Creates a person in Highrise
+    /**
+     * Creates a person in Highrise using the given XML
      * @param SimpleXMLElement $person the xml of the person to be created
      * @return SimpleXMLElement $person_xml the created person's xml
      * @throws Exception
@@ -322,7 +338,8 @@ class APIInterface {
     }
     
     
-    /** Updates a person in Highrise with the given xml.
+    /**
+     * Updates a person in Highrise using the given XML
      * @param int $person_id
      * @param SimpleXMLElement $update_xml the XML to update the person with
      * @return SimpleXMLElement $updated the updated XML of the person

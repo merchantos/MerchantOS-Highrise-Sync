@@ -1,8 +1,7 @@
 <?php
 /**
- * SyncAccount, a business object representing a subscriber to the MerchantOS-Highrise-Sync service
+ * SyncAccount represents a subscriber to the MerchantOS-Highrise-Sync service
  * @author Erika Ellison
- * 
  */
 
 require_once('SyncDateTime.class.php');
@@ -10,61 +9,107 @@ require_once('APIInterface.class.php');
 require_once('XMLTransformations.class.php');
 require_once('SyncAccountDAO.class.php');
 
+/**
+ * SyncAccount class
+ * @author Erika Ellison 
+ */
 class SyncAccount {
+    /**
+     * Unique id, primary key in database
+     * @var int 
+     */
+    protected $_id;
+    
+    /**
+     * MerchantOS account key
+     * @var string
+     */
+    protected $_mos_acct_key;
+    
+    /**
+     * MerchantOS API key
+     * @var string
+     */
     protected $_mos_api_key;
+    
+    /**
+     * MerchantOS account id
+     * @var int
+     */
     protected $_mos_acct_id;
+    
+    /**
+     * Highrise API key
+     * @var string
+     */
     protected $_highrise_api_key;
+    
+    /**
+     * Highrise username
+     * @var string
+     */
     protected $_highrise_username;
+
+    /**
+     * The id number assigned to the custom field used in Highrise to store the MerchantOS customer id of a synced contact
+     * @var int
+     */
+    protected $_custom_field_id;
     
-    protected $_email_address;
-    protected $_password;
-    protected $_name;
-    
+    /**
+     * The datetime the account was last synced
+     * @var SyncDateTime
+     */
     protected $_last_synced_on;
-    protected $_id; // primary key in database table
-    protected $_custom_field_id; // 
     
+    /**
+     * 
+     * @var APIInterface
+     */
     protected $_api_interface;
+    
+    /**
+     *
+     * @var SyncAccountDAO 
+     */
     protected $_dao;
     
     
     // a custom-defined foreign key field in Highrise for MerchantOS customerID
     // changing the value of this constant will break the application for any existing users
     // unless (their Highrise accounts) or (their database records and this class) are updated accordingly
-    const HIGHRISE_CUST_ID_FIELD_NAME = 'merchantos_customerid';
+    const HIGHRISE_CUST_ID_FIELD_NAME = 'MerchantOS_CustomerID_DoNotRemove';
     
     
     /**
+     * @param int $id
+     * @param string $mos_acct_key
+     * 
      * @param string $mos_api_key
-     * @param string $mos_acct_id
+     * @param int $mos_acct_id
      * 
      * @param string $highrise_api_key
      * @param string $highrise_username
      * 
-     * @param string $email_address
-     * @param string $password
-     * @param string $name
-     * 
      * @param int $custom_field_id
-     * @param int $id
      * @param string $last_synced_on
      */
-    public function __construct($mos_api_key, $mos_acct_id, 
-            $highrise_api_key, $highrise_username, 
-            $email_address, $password, $name,
-            $custom_field_id=NULL, $id=NULL, $last_synced_on=NULL) {
+    public function __construct($id, $mos_acct_key, 
+            $mos_api_key, $mos_acct_id, 
+            $highrise_api_key, $highrise_username,
+            $custom_field_id=NULL, $last_synced_on=NULL) {
+        
+        $this->_id = $id;
+        $this->_mos_acct_key = $mos_acct_key;
         
         $this->_mos_api_key = $mos_api_key;
         $this->_mos_acct_id = $mos_acct_id;
+        
         $this->_highrise_api_key = $highrise_api_key;
         $this->_highrise_username = $highrise_username;
         
-        $this->_email_address = $email_address;
-        $this->_password = $password;
-        $this->_name = $name;
-        
         $this->_custom_field_id = $custom_field_id;
-        $this->_id = $id;
+
         if ($last_synced_on) {
             $this->_last_synced_on = new SyncDateTime($last_synced_on);
         }
@@ -74,7 +119,8 @@ class SyncAccount {
     }
     
     
-    /** Syncs the account
+    /** 
+     * Syncs the contact data in MerchantOS and Highrise
      * @return boolean $was_synced
      */
     public function sync() {
@@ -98,7 +144,8 @@ class SyncAccount {
         return $was_synced;
     }
     
-    /** Saves the account
+    /**
+     * Saves the account to the database
      * @return boolean $was_saved
      */
     public function save() {
@@ -107,6 +154,7 @@ class SyncAccount {
     }
 
     /**
+     * checks for valid MerchantOS API credentials
      * @return boolean $valid 
      */
     public function hasValidCredentialsMerchantOS() {
@@ -121,6 +169,7 @@ class SyncAccount {
     }
 
     /**
+     * checks for valid Highrise API credentials
      * @return boolean $valid 
      */
     public function hasValidCredentialsHighrise() {
@@ -134,7 +183,8 @@ class SyncAccount {
         return $valid;
     }
     
-    /** Copies all Customers in MerchantOS to Highrise, and all People in Highrise to MerchantOS
+    /** 
+     * Copies all Customers in MerchantOS to Highrise, and all People in Highrise to MerchantOS
      */
     private function initialSync() {        
         // create a custom field in Highrise to track MerchantOS's customer id for each contact
@@ -158,7 +208,8 @@ class SyncAccount {
     }
     
     
-    /** Syncs Customers and People that have been created or modified after $_last_synced_on.
+    /** 
+     * Syncs Customers and People that have been created or modified after $_last_synced_on.
      */
     private function incrementalSync() {
         $customers_created_since = $this->_api_interface->readCustomersCreatedSince($this->_last_synced_on->getMerchantOSFormat());
@@ -186,6 +237,7 @@ class SyncAccount {
     
 
     /** 
+     * Creates a customer in MerchantOS from XML in Highrise person schema
      * @param SimpleXMLElement $person
      * @return SimpleXMLElement $customer
      */
@@ -206,6 +258,7 @@ class SyncAccount {
     
     
     /**
+     * Updates a customer in MerchantOS from XML in Highrise person schema
      * @param SimpleXMLElement $person
      * @return SimpleXMLElement $customer
      */
@@ -227,6 +280,7 @@ class SyncAccount {
     }
     
     /**
+     * Creates a person in Highrise from XML in MerchantOS customer schema
      * @param SimpleXMLElement $customer
      * @return SimpleXMLElement $person
      */
@@ -242,6 +296,7 @@ class SyncAccount {
     }
     
     /**
+     * Updates a person in Highrise from XML in MerchantOS customer schema
      * @param SimpleXMLElement $customer
      * @return SimpleXMLElement $person
      */
@@ -267,6 +322,7 @@ class SyncAccount {
     
     
     /**
+     * Updates a person in Highrise with a MerchantOS customer id
      * @param SimpleXMLElement $person
      * @param int $mos_customer_id
      * @return SimpleXMLElement $updated_person
@@ -286,13 +342,13 @@ class SyncAccount {
     }
         
     /**
+     * Logs an exception and any data involved.
      * @param Exception $e 
      * @param string $data_involved
      */
     public function logException($e, $data_involved=NULL) {
         // write date, SyncAccount id, exception message and any data involved in the exception to a log   
         $now = new SyncDateTime();
-        $acct_id = $this->_id;
         $exception_message = 'SyncAccount::' . $e->getMessage();
 
         $string = $now->getMerchantOSFormat() . "\nACCT_ID: " . $this->_id . "\nDESCRIPTION: " . $exception_message;
@@ -309,38 +365,83 @@ class SyncAccount {
         }
     }
     
+    /**
+     * Set the MerchantOS API key
+     * @param string $mos_api_key 
+     */
+    public function setMOSAPIKey($mos_api_key) {
+        $this->_mos_api_key = $mos_api_key;
+    }
     
     
-    /* a bunch of getter methods */
+    /**
+     * Set the MerchantOS account ID
+     * @param int $mos_account_id 
+     */
+    public function setMOSAccountID($mos_account_id) {
+        $this->_mos_acct_id = $mos_account_id;
+    }
     
+    /**
+     * Get the id (database primary key)
+     * @return int $id
+     */
+    public function getID() {
+        return $this->_id;
+    }
+    
+    /**
+     * Get the MerchantOS account key
+     * @return string $mos_account_key
+     */
+    public function getMOSAccountKey() {
+        return $this->_mos_acct_key;
+    }
+    
+    /**
+     * Get the MerchantOS API key
+     * @return string $mos_api_key
+     */
     public function getMOSAPIKey() {
         return $this->_mos_api_key;
     }
     
+    /**
+     * Get the MerchantOS account ID
+     * @return int $mos_account_id
+     */
     public function getMOSAccountID() {
         return $this->_mos_acct_id;
     }
     
+    /**
+     * Get the Highrise API key
+     * @return string $highrise_api_key
+     */
     public function getHighriseAPIKey() {
         return $this->_highrise_api_key;
     }
     
+    /**
+     * Get the Highrise username
+     * @return string $highrise_username
+     */
     public function getHighriseUsername() {
         return $this->_highrise_username;
     }
     
-    public function getEmailAddress() {
-        return $this->_email_address;
+    /**
+     * Get the custom field id
+     * @return int $custom_field_id
+     */
+    public function getCustomFieldID() {
+        return $this->_custom_field_id;
     }
     
-    public function getPassword() {
-        return $this->_password;
-    }
-    
-    public function getName() {
-        return $this->_name;
-    }
-    
+    /**
+     * Get the last synced on in database datetime format
+     * @return string $last_synced_on
+     */
     public function getLastSyncedOn() {
         $last_synced_on = NULL;
         if ($this->_last_synced_on) {
@@ -349,16 +450,9 @@ class SyncAccount {
         return $last_synced_on;
     }
     
-    public function getID() {
-        return $this->_id;
-    }
-    
-    public function getCustomFieldID() {
-        return $this->_custom_field_id;
-    }
-    
-    
-     /** returns a string describing the values of each field
+
+    /**
+     * Returns a string describing the values of each field
      * @return string $s
      */
     public function toString() {
@@ -368,13 +462,12 @@ class SyncAccount {
         }
         
         $s = '<pre>SyncAccount ID: ' . $this->_id . 
-                '<br />  email_address: ' . $this->_email_address .
-                '<br />  password: ' . $this->_password . 
-                '<br />  name: ' . $this->_name . 
+                '<br />  mos_acct_key: ' . $this->_mos_acct_key . 
                 '<br />  mos_api_key: ' . $this->_mos_api_key . 
                 '<br />  mos_acct_id: ' . $this->_mos_acct_id . 
                 '<br />  highrise_api_key: ' . $this->_highrise_api_key . 
                 '<br />  highrise_username: ' . $this->_highrise_username . 
+                '<br />  custom_field_id: ' . $this->_custom_field_id . 
                 '<br />  last_synced_on: ' . $last_synced_on . 
                 '</pre>';
         return $s;

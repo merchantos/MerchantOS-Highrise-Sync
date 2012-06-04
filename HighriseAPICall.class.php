@@ -2,15 +2,19 @@
 
 /**
  * HighriseAPICall wraps up calls to the Highrise API.
- *
  * @author Erika Ellison
  */
 
+require_once('MOScURL.class.php');
+
+/**
+ * HighriseAPICall class
+ * @author Erika Ellison 
+ */
 class HighriseAPICall {
     protected $_url;
     protected $_api_key;
     protected $_password = 'X';
-    protected $_cert_filename = 'GeoTrustGlobalCA';
 
     
     
@@ -22,19 +26,12 @@ class HighriseAPICall {
     /**
      * Make the specified API call.
      * @param string $action one of the four HTTP verbs
-     * @param string $resource_name the Highrise resource to be accessed
+     * @param string $resource_name the Highrise resource to be accessed including any query parameters
      * @param string $xml a well-formed XML string for a Highrise create, update, or delete request
      * @return SimpleXMLElement $result_simplexml
-     * $resource_name parameter should include any query parameters
-     * as suggested by Highrise API documentation
-     * eg, if you want to GET all People, pass in 'people.xml'
-     * and if you want to get People by search term where field=value,
-     * then pass in '/people/search.xml?criteria[field]=value'
      */
     public function makeAPICall($resource_name, $action, $xml=null) {
-        /* initialize curl session and set defaults for new Highrise API call */
         $curl = new MOScURL();
-        $curl->setUserAgent('MerchantOS-Highrise-Sync');
         $curl->setReturnTransfer(true);
         $curl->setBasicAuth($this->_api_key, $this->_password);
         

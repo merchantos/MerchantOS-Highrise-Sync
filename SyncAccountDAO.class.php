@@ -1,7 +1,9 @@
 <?php
 
 /**
- * SyncAccountDAO is a data access object for SyncAccount.
+ * SyncAccountDAO is a data access object for SyncAccount,
+ * used to save SyncAccount fields to a record in a database table, 
+ * and report exceptions to another database table.
  * @author Erika Ellison
  */
 
@@ -36,15 +38,33 @@ class SyncAccountDAO {
         $all_accounts = array();
         
         while ($row = $result->fetch_assoc()) {
-            $new_acct = new SyncAccount($row['mos_api_key'], $row['mos_acct_id'],
-                    $row['highrise_api_key'], $row['highrise_username'],
-                    $row['email_address'], $row['password'], $row['name'],
-                    $row['custom_field_id'], $row['id'], $row['last_synced_on']);    
+            $new_acct = $this->instantiateSyncAccountFromRow($row);
             $all_accounts[] = $new_acct;
         }
         return $all_accounts;
     }
     
+    
+    /** Returns the SyncAccount associated with the MerchantOS account key, if it exists
+     * Otherwise, returns false.
+     * @param string $mos_account_key 
+     * @return mixed
+     */
+    public function getSyncAccountByMOSAccountKey($mos_account_key) { 
+        $query_string = 'SELECT * FROM ' . self::SYNC_ACCT_TABLE . 
+                ' WHERE mos_account_key=' . $this->sqlize($mos_account_key);
+        $result = $this->_mysqli->query($query_string);
+        
+        if ($result && is_object($result)) {
+            $row = $result->fetch_assoc();
+            $sync_account = $this->instantiateSyncAccountFromRow($row);
+            return $sync_account;
+        }
+        else {
+            return false;
+        }
+    }
+   
     /** Saves the SyncAccount to the database
      * @param SyncAccount $sync_account
      * @return boolean $was_saved 
@@ -65,25 +85,25 @@ class SyncAccountDAO {
      * @return boolean $was_created
      */
     public function createSyncAccount($sync_account) {
+        $id = $this->sqlize($sync_account->getID());
+        $mos_account_key = $this->sqlize($sync_account->getMOSAccountKey());
         $mos_api_key = $this->sqlize($sync_account->getMOSAPIKey());
         $mos_acct_id = $this->sqlize($sync_account->getMOSAccountID());
         $highrise_api_key = $this->sqlize($sync_account->getHighriseAPIKey());
         $highrise_username = $this->sqlize($sync_account->getHighriseUsername());
-        $email_address = $this->sqlize($sync_account->getEmailAddress());
-        $password = $this->sqlize($sync_account->getPassword());
-        $name = $this->sqlize($sync_account->getName());
         $custom_field_id = $this->sqlize($sync_account->getCustomFieldID());
-        $id = $this->sqlize($sync_account->getID());
         $last_synced_on = $this->sqlize($sync_account->getLastSyncedOn());
         
-        $value_string = '(' . $mos_api_key . ', ' . $mos_acct_id . ', ' . 
-                $highrise_api_key . ', ' . $highrise_username . ', ' . 
-                $email_address . ', ' . $password . ', ' . $name . ', ' . 
-                $custom_field_id  . ', ' . $id . ', ' . $last_synced_on . ')';
+        $value_string = '(' . $mos_account_key . ', ' . 
+                $mos_api_key . ', ' . $mos_acct_id . ', ' . 
+                $highrise_api_key . ', ' . $highrise_username . ', ' .  
+                $custom_field_id  . ', ' . $last_synced_on . ')';
         
         $query_string = 'INSERT INTO ' . self::SYNC_ACCT_TABLE . 
-                ' (mos_api_key, mos_acct_id, highrise_api_key, highrise_username, 
-                    email_address, password, name, custom_field_id, id, last_synced_on) VALUES ' . $value_string;
+                ' (mos_account_key, 
+                    mos_api_key, mos_acct_id, 
+                    highrise_api_key, highrise_username, 
+                    custom_field_id, last_synced_on) VALUES ' . $value_string;
 
         $was_created = $this->_mysqli->query($query_string);
         return $was_created;
@@ -95,16 +115,15 @@ class SyncAccountDAO {
      * @return boolean $was_updated
      */
     public function updateSyncAccount($sync_account) {
+        $id = $this->sqlize($sync_account->getID());
+        $mos_account_key = $this->sqlize($sync_account->getMOSAccountKey());
         $mos_api_key = $this->sqlize($sync_account->getMOSAPIKey());
         $mos_acct_id = $this->sqlize($sync_account->getMOSAccountID());
         $highrise_api_key = $this->sqlize($sync_account->getHighriseAPIKey());
         $highrise_username = $this->sqlize($sync_account->getHighriseUsername());
-        $email_address = $this->sqlize($sync_account->getEmailAddress());
-        $password = $this->sqlize($sync_account->getPassword());
-        $name = $this->sqlize($sync_account->getName());
         $custom_field_id = $this->sqlize($sync_account->getCustomFieldID());
         $last_synced_on = $this->sqlize($sync_account->getLastSyncedOn());
-        $id = $this->sqlize($sync_account->getID());
+       
         
         $query_string = 'UPDATE ' . self::SYNC_ACCT_TABLE . 
                 ' SET' . 
@@ -112,11 +131,8 @@ class SyncAccountDAO {
                 ', mos_acct_id=' . $mos_acct_id . 
                 ', highrise_api_key=' . $highrise_api_key . 
                 ', highrise_username=' . $highrise_username . 
-                ', email_address=' . $email_address . 
-                ', password=' . $password . 
-                ', name=' . $name . 
                 ', custom_field_id=' . $custom_field_id . 
-                ', last_synced_on=' . $custom_field_id .                 
+                ', last_synced_on=' . $last_synced_on .                 
                 ' WHERE id=' . $id;
         
         $was_updated = $this->_mysqli->query($query_string);
@@ -172,6 +188,19 @@ class SyncAccountDAO {
         return $was_deleted;
     }
     
+    
+    /**
+     * @param associative array $row
+     * @return SyncAccount $sync_account
+     */
+    private function instantiateSyncAccountFromRow($row) {
+        $sync_account = new SyncAccount($row['id'], $row['mos_account_key'], 
+                $row['mos_api_key'], $row['mos_account_id'], 
+                $row['highrise_api_key'], $row['highrise_username'], 
+                $row['custom_field_id'], $row['last_synced_on']);
+        
+        return $sync_account;
+    }
     
     /** Sanitizes all values, and single-quotes non-NULL values to be inserted into a SQL query.
      * @param string $value
