@@ -1,15 +1,25 @@
 <?php
 
 /**
- * SyncDateTime, a wrapper class for datetimes used in MerchantOS-Highrise-Sync
+ * SyncDateTime, a wrapper class to abstract away formatting needs for datetimes used in MerchantOS-Highrise-Sync
  * @author Erika Ellison
  */
+
+/**
+ * SyncDateTime class
+ * @author Erika Ellison 
+ */
 class SyncDateTime {
+    
+    /**
+     * @var DateTime 
+     */
     protected $_datetime;
     
-    /** constructs a new SyncDateTime
+    
+    /**
+     * Constructs a new SyncDateTime using the same rules as PHP DateTime
      * @param string $datetime a parsable datetime string
-     * if $datetime is omitted, the SyncDateTime constructed will have a datetime value of "now"
      */
     public function __construct($datetime=null) {
         try {
@@ -20,7 +30,9 @@ class SyncDateTime {
         }
     }
     
-    /** gets the SyncDateTime in Database format
+    
+    /**
+     * Gets a string representing the SyncDateTime in Database format
      * @return string 
      */
     public function getDatabaseFormat() {
@@ -28,19 +40,22 @@ class SyncDateTime {
         return $this->_datetime->format('Y-m-d H:i:s');
     }
     
-    /** gets the SyncDateTime in MerchantOS API format
+    
+    /** Gets a string representing the SyncDateTime in MerchantOS API format
      * @return string
      */
     public function getMerchantOSFormat() {
-        // MerchantOS seems to treat any UTC timezone notation (Z, +00:00) as Pacific Time
-        // hence this kind of kludgy fix to get an ISO-8601 string that will return the desired results
+        // MerchantOS's API seems to treat any UTC timezone notation (Z, +00:00) as actually in Pacific Time
+        // hence this kind of kludgy fix to get an ISO-8601 string that will return the desired query results
         $this->_datetime->modify('-7 hours');
         $formatted = $this->_datetime->format('c');
         $this->_datetime->modify('+7 hours');
         return $formatted;
     }
     
-    /** gets the SyncDateTime in Highrise API format
+    
+    /**
+     * Gets a string representing the SyncDateTime in Highrise API format
      * @return string 
      */
     public function getHighriseFormat() {
@@ -48,7 +63,8 @@ class SyncDateTime {
         return $this->_datetime->format('YmdHis');
     }
     
-    /** returns an int representing the SyncDateTime for easy datetime comparisons
+    
+    /** Get an int representing the SyncDateTime (seconds since Unix epoch) for easy datetime arithmetic
      * @return int 
      */
     public function getInt() {

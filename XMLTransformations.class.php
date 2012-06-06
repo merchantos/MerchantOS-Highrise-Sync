@@ -9,14 +9,18 @@
 
 class XMLTransformations {
     
-    /** Transforms a Customer XML document to a Person XML document.
+    const CUSTOMER_TO_PERSON_STYLESHEET = 'XSLcustomerToPerson.xsl';
+    const PERSON_TO_CUSTOMER_STYLESHEET = 'XSLpersonToCustomer.xsl';
+    
+    /** 
+     * Transforms a Customer XML document to a Person XML document.
      * @param SimpleXMLElement $customer_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customer schema
      * @return SimpleXMLElement $people_xml a SimpleXMLElement representing a well-formed XML document in the Highrise Person schema
      * @throws Exception
      */
     public static function customerToPerson($customer_xml, $custom_field_id) {
         try {
-            $person_xml = XMLTransformations::transform($customer_xml, 'customerToPerson.xsl');
+            $person_xml = XMLTransformations::transform($customer_xml, self::CUSTOMER_TO_PERSON_STYLESHEET);
             $custom_field_xml = new SimpleXMLElement('<person><subject_datas type="array"><subject_data><subject_field_id>' . 
                     $custom_field_id . '</subject_field_id><value>' . 
                     $customer_xml->customerID . '</value></subject_data></subject_datas></person>');
@@ -29,14 +33,15 @@ class XMLTransformations {
         return $person_xml;
     }
     
-    /** Transforms a Person XML document to a Customer XML document.
+    /**
+     *  Transforms a Person XML document to a Customer XML document.
      * @param SimpleXMLElement $person_xml a SimpleXMLElement representing a well-formed XML document in the Highrise Person schema
      * @return SimpleXMLElement $customer_xml a SimpleXMLElement representing a well-formed XML document in the MerchantOS Customer schema
      * @throws Exception
      */
     public static function personToCustomer($person_xml) {
         try {
-            $customer_xml = XMLTransformations::transform($person_xml, 'personToCustomer.xsl');
+            $customer_xml = XMLTransformations::transform($person_xml, self::PERSON_TO_CUSTOMER_STYLESHEET);
         }
         catch (Exception $e) {
             throw new Exception('XMLTransformations::personToCustomer Error: ' . $e->getMessage());
@@ -44,13 +49,13 @@ class XMLTransformations {
         return $customer_xml;
     }
     
-    /** appends deep copies of all children elements of an XML document to another XML document
-    * both XML documents should have root elements that are equivalent
-    * @param SimpleXMLElement $xml1
-    * @param SimpleXMLElement $xml2
-    * @return SimpleXMLElement $merged
-    * @throws Exception
-    */        
+    /**
+     * Appends deep copies of all child elements of the second XML document to the root element of the first XML document
+     * @param SimpleXMLElement $xml1
+     * @param SimpleXMLElement $xml2
+     * @return SimpleXMLElement $merged
+     * @throws Exception
+     */        
     public static function mergeXML($xml1, $xml2) {
         $updated_count = $xml1->count() + $xml2->count();
         try {
@@ -75,7 +80,9 @@ class XMLTransformations {
         return $merged;
     }
     
-    /** Uses an XSLTProcessor to transform XML according to the given stylesheet
+    
+    /**
+     * Uses an XSLTProcessor to transform XML according to the given stylesheet
      * @param SimpleXMLElement $original_xml
      * @param string $rules_filename the pathname of an .XSL file
      * @return SimpleXMLElement $new_xml

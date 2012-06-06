@@ -1,571 +1,524 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<java version="1.6.0_23" class="java.beans.XMLDecoder">
- <object class="com.horstmann.violet.product.diagram.activity.ActivityDiagramGraph">
-  <void method="addNode">
-   <object id="ScenarioStartNode0" class="com.horstmann.violet.product.diagram.activity.ScenarioStartNode"/>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>486.0</double>
-     <double>10.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="DecisionNode0" class="com.horstmann.violet.product.diagram.activity.DecisionNode">
-    <void property="condition">
-     <void property="text">
+<?xml version="1.0" encoding="UTF-8"?> 
+<java version="1.6.0_26" class="java.beans.XMLDecoder"> 
+ <object class="com.horstmann.violet.product.diagram.activity.ActivityDiagramGraph"> 
+  <void method="addNode"> 
+   <object id="ScenarioStartNode0" class="com.horstmann.violet.product.diagram.activity.ScenarioStartNode"/> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>454.0</double> 
+     <double>6.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="DecisionNode0" class="com.horstmann.violet.product.diagram.activity.DecisionNode"> 
+    <void property="condition"> 
+     <void property="text"> 
       <string>Existing account
 associated with
-MOS account key?</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>211.0</double>
-     <double>120.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode0" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY FORM
-For user to enter
-Highrise credentials.</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>241.0</double>
-     <double>592.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode1" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
+MOS account key?</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>213.0</double> 
+     <double>104.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode0" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>DISPLAY message
+Not signed up, enter
+Highrise credentials.</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>243.0</double> 
+     <double>502.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode1" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
       <string>Replace
 database
 values with
-GET values</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>211.0</double>
-     <double>285.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="DecisionNode1" class="com.horstmann.violet.product.diagram.activity.DecisionNode">
-    <void property="condition">
-     <void property="text">
+GET values</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>213.0</double> 
+     <double>269.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="DecisionNode1" class="com.horstmann.violet.product.diagram.activity.DecisionNode"> 
+    <void property="condition"> 
+     <void property="text"> 
       <string>Given MOS API key
 and acct number
-match database?</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>16.0</double>
-     <double>203.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="DecisionNode2" class="com.horstmann.violet.product.diagram.activity.DecisionNode">
-    <void property="condition">
-     <void property="text">
-      <string>Submit Type?</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>430.0</double>
-     <double>63.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode2" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
+match database?</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>18.0</double> 
+     <double>187.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="DecisionNode2" class="com.horstmann.violet.product.diagram.activity.DecisionNode"> 
+    <void property="condition"> 
+     <void property="text"> 
+      <string>Submit Type?</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>392.0</double> 
+     <double>49.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode2" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
       <string>Save account
-to database.</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>834.0</double>
-     <double>277.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode3" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY WARNING
-invalid credentials</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>622.0</double>
-     <double>420.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="DecisionNode3" class="com.horstmann.violet.product.diagram.activity.DecisionNode">
-    <void property="condition">
-     <void property="text">
-      <string>Credentials valid?</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>797.0</double>
-     <double>130.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode4" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY ACCOUNT STATUS
-last synced on
-account mgmt options</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>791.0</double>
-     <double>591.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode5" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY FORM
+to database.</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>718.0</double> 
+     <double>260.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode3" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>DISPLAY warning
+invalid credentials</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>534.0</double> 
+     <double>501.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="DecisionNode3" class="com.horstmann.violet.product.diagram.activity.DecisionNode"> 
+    <void property="condition"> 
+     <void property="text"> 
+      <string>Valid Highrise
+credentials?</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>689.0</double> 
+     <double>108.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode4" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>DISPLAY message
+&apos;successful signup,
+sync pending&apos;.</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>701.0</double> 
+     <double>501.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode5" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>DISPLAY form
 For user to enter
-Highrise credentials.</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>619.0</double>
-     <double>590.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode6" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY EXCEPTIONS</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>426.0</double>
-     <double>478.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode7" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY ACCOUNT STATUS
-last synced on
-account mgmt options</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>26.0</double>
-     <double>593.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ScenarioEndNode0" class="com.horstmann.violet.product.diagram.activity.ScenarioEndNode"/>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>489.0</double>
-     <double>889.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode8" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>User clicks button</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>429.0</double>
-     <double>708.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="DecisionNode4" class="com.horstmann.violet.product.diagram.activity.DecisionNode">
-    <void property="condition">
-     <void property="text">
-      <string>Credentials valid?</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>37.0</double>
-     <double>380.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode9" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY WARNING
-invalid credentials</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>154.0</double>
-     <double>480.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode10" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>Run sync.</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>842.0</double>
-     <double>393.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode11" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>Send new information to reloaded page.</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>356.0</double>
-     <double>799.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode12" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY ACCOUNT STATUS
-last synced on
-account mgmt options</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>406.0</double>
-     <double>589.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>NO</string>
-    </void>
-   </object>
-   <object idref="DecisionNode0"/>
-   <object idref="ActivityNode0"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>YES</string>
-    </void>
-   </object>
-   <object idref="DecisionNode0"/>
-   <object idref="DecisionNode1"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>NO</string>
-    </void>
-   </object>
-   <object idref="DecisionNode1"/>
-   <object idref="ActivityNode1"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>YES</string>
-    </void>
-   </object>
-   <object idref="DecisionNode3"/>
-   <object idref="ActivityNode2"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>NO</string>
-    </void>
-   </object>
-   <object idref="DecisionNode3"/>
-   <object idref="ActivityNode3"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ScenarioStartNode0"/>
-   <object idref="DecisionNode2"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>None</string>
-    </void>
-   </object>
-   <object idref="DecisionNode2"/>
-   <object idref="DecisionNode0"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode3"/>
-   <object idref="ActivityNode5"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>View Exceptions</string>
-    </void>
-   </object>
-   <object idref="DecisionNode2"/>
-   <object idref="ActivityNode6"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode7"/>
-   <object idref="ActivityNode8"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode0"/>
-   <object idref="ActivityNode8"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode5"/>
-   <object idref="ActivityNode8"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode4"/>
-   <object idref="ActivityNode8"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>YES</string>
-    </void>
-   </object>
-   <object idref="DecisionNode1"/>
-   <object idref="DecisionNode4"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode1"/>
-   <object idref="DecisionNode4"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>YES</string>
-    </void>
-   </object>
-   <object idref="DecisionNode4"/>
-   <object idref="ActivityNode7"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>NO</string>
-    </void>
-   </object>
-   <object idref="DecisionNode4"/>
-   <object idref="ActivityNode9"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode9"/>
-   <object idref="ActivityNode7"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode2"/>
-   <object idref="ActivityNode10"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode10"/>
-   <object idref="ActivityNode4"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode8"/>
-   <object idref="ActivityNode11"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode11"/>
-   <object idref="ScenarioEndNode0"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-    <void property="middleLabel">
-     <string>Submit Highrise Credentials</string>
-    </void>
-   </object>
-   <object idref="DecisionNode2"/>
-   <object idref="DecisionNode3"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode12"/>
-   <object idref="ActivityNode8"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
-   <object idref="ActivityNode6"/>
-   <object idref="ActivityNode12"/>
-  </void>
- </object>
-</java>
+Highrise credentials
+or view exceptions.</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>328.0</double> 
+     <double>697.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode6" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>DISPLAY
+exceptions</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>419.0</double> 
+     <double>502.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode7" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>DISPLAY status</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>337.0</double> 
+     <double>605.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ScenarioEndNode0" class="com.horstmann.violet.product.diagram.activity.ScenarioEndNode"/> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>392.0</double> 
+     <double>871.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="DecisionNode4" class="com.horstmann.violet.product.diagram.activity.DecisionNode"> 
+    <void property="condition"> 
+     <void property="text"> 
+      <string>Valid Highrise 
+credentials?</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>39.0</double> 
+     <double>364.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode8" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>DISPLAY warning
+invalid credentials</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>52.0</double> 
+     <double>502.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode9" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>Run sync.</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>726.0</double> 
+     <double>369.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="addNode"> 
+   <object id="ActivityNode10" class="com.horstmann.violet.product.diagram.activity.ActivityNode"> 
+    <void property="name"> 
+     <void property="text"> 
+      <string>User clicks button, send new
+information to reloaded page.</string> 
+     </void> 
+    </void> 
+   </object> 
+   <object class="java.awt.geom.Point2D$Double"> 
+    <void method="setLocation"> 
+     <double>302.0</double> 
+     <double>789.0</double> 
+    </void> 
+   </object> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>NO</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode0"/> 
+   <object idref="ActivityNode0"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>YES</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode0"/> 
+   <object idref="DecisionNode1"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>NO</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode1"/> 
+   <object idref="ActivityNode1"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>YES</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode3"/> 
+   <object idref="ActivityNode2"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>NO</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode3"/> 
+   <object idref="ActivityNode3"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ScenarioStartNode0"/> 
+   <object idref="DecisionNode2"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>None</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode2"/> 
+   <object idref="DecisionNode0"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>View Exceptions</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode2"/> 
+   <object idref="ActivityNode6"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>YES</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode1"/> 
+   <object idref="DecisionNode4"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode1"/> 
+   <object idref="DecisionNode4"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>YES</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode4"/> 
+   <object idref="ActivityNode7"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>NO</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode4"/> 
+   <object idref="ActivityNode8"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode8"/> 
+   <object idref="ActivityNode7"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode2"/> 
+   <object idref="ActivityNode9"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode9"/> 
+   <object idref="ActivityNode4"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode10"/> 
+   <object idref="ScenarioEndNode0"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+    <void property="middleLabel"> 
+     <string>Submit Highrise Credentials</string> 
+    </void> 
+   </object> 
+   <object idref="DecisionNode2"/> 
+   <object idref="DecisionNode3"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode7"/> 
+   <object idref="ActivityNode5"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode5"/> 
+   <object idref="ActivityNode10"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode4"/> 
+   <object idref="ActivityNode7"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode3"/> 
+   <object idref="ActivityNode7"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode6"/> 
+   <object idref="ActivityNode7"/> 
+  </void> 
+  <void method="connect"> 
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge"> 
+    <void property="endArrowHead"> 
+     <object class="com.horstmann.violet.ArrowHead" field="V"/> 
+    </void> 
+   </object> 
+   <object idref="ActivityNode0"/> 
+   <object idref="ActivityNode7"/> 
+  </void> 
+ </object> 
+</java> 

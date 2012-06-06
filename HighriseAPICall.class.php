@@ -26,7 +26,7 @@ class HighriseAPICall {
     /**
      * Make the specified API call.
      * @param string $action one of the four HTTP verbs
-     * @param string $resource_name the Highrise resource to be accessed including any query parameters
+     * @param string $resource_name the Highrise resource to be accessed, including any query parameters
      * @param string $xml a well-formed XML string for a Highrise create, update, or delete request
      * @return SimpleXMLElement $result_simplexml
      */

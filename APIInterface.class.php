@@ -118,7 +118,7 @@ class APIInterface {
     
     
     /**
-     * finds the ID of the first person in Highrise associated with a given MerchantOS customer ID
+     * Finds the ID of the first person in Highrise associated with a given MerchantOS customer ID
      * @param int/string $customer_id
      * @return int/string $person_id
      * @throws Exception
@@ -140,7 +140,7 @@ class APIInterface {
     
     
     /**
-     * reads all Customers in MerchantOS
+     * Reads all Customers in MerchantOS
      * @return SimpleXMLElement $all_customers
      * @throws Exception
      */

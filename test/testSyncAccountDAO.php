@@ -4,11 +4,55 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 require_once('SyncAccountDAO.class.php');
+require_once('SyncDateTime.class.php');
+
 define('BR', '<br />');
 
 $dao = new SyncAccountDAO();
 
+testGetExceptions();
 
+
+function testLogException() {
+    global $dao;
+    $now = new SyncDateTime();
+    $when = $now->getDatabaseFormat();
+    $dao->logException('6666', $when, 'this is an exception with only a message and no data involved');
+}
+
+
+function testGetExceptions() {
+    global $dao;
+    
+    $html = $dao->getExceptionsInHTML(4);
+    
+    echo $html;   
+}
+
+
+function testSaveAndUpdate() {
+    global $dao;
+    $sync_acct = new SyncAccount(null, 'ToBeCreated',
+            'mosapikey', 'mosacctid',
+            'highriseapikey', 'highgirseusername',
+            null, null);
+    echo $sync_acct->toString();
+    $sync_acct->save();
+    echo $sync_acct->toString();
+}
+
+
+
+// run successfully 2012-06-05
+function testGetSyncAccountByMOSAccountKey() {
+    global $dao;
+    $existing_account_key = 'RealTestAccount';
+    $nonexisting_account_key = 'NewAccount';
+    $result = $dao->getSyncAccountByMOSAccountKey($existing_account_key);
+    echo $result->toString();    
+    $result = $dao->getSyncAccountByMOSAccountKey($nonexisting_account_key);
+    var_dump($result);
+}
 
 // run successfully 2012-05-18
 function testUpdateLastSyncedOn() {
@@ -37,19 +81,6 @@ function testUpdateCustomFieldID() {
     echo BR;
 }
 
-
-// run successfully 2012-05-18
-function testDeleteSyncAccount() {
-    global $dao;
-    $existing_acct = new SyncAccount('fjkdlf', 39, 
-            'eruirue', 'herpsrus', 
-            'derp.h@gmail.com', 'strongpass', 'Herp McDerp', 
-            42, 12, time());
-    $was_deleted = $dao->deleteSyncAccount($existing_acct);
-    echo 'was deleted=';
-    var_dump($was_deleted);
-    echo BR;
-}
 
 // run successfully 2012-05-18
 function testGetAllSyncAccounts() {

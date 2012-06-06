@@ -63,34 +63,35 @@ class SyncAccount {
     protected $_last_synced_on;
     
     /**
-     * 
+     * An instance of APIInterface responsible for the SyncAccount's API call needs
      * @var APIInterface
      */
     protected $_api_interface;
     
     /**
-     *
+     * An instance of SyncAccountDAO responsible for the SyncAccount's data access needs
      * @var SyncAccountDAO 
      */
     protected $_dao;
     
     
-    // a custom-defined foreign key field in Highrise for MerchantOS customerID
-    // changing the value of this constant will break the application for any existing users
-    // unless (their Highrise accounts) or (their database records and this class) are updated accordingly
+    /**
+     * The name of the 'foreign key' field that this application defines and then uses to sync updates to contact data.
+     * Changing the value of this constant will break the application for any existing users
+     * unless (their Highrise accounts) or (their database records, this class, and the DAO class) have been appropriately refactored and updated
+     * @const HIGHRISE_CUST_ID_FIELD_NAME 
+     */
     const HIGHRISE_CUST_ID_FIELD_NAME = 'MerchantOS_CustomerID_DoNotRemove';
     
     
     /**
+     * Creates a new SyncAccount. If not being instantiated from a database record, $id should be set to null.
      * @param int $id
      * @param string $mos_acct_key
-     * 
      * @param string $mos_api_key
      * @param int $mos_acct_id
-     * 
      * @param string $highrise_api_key
      * @param string $highrise_username
-     * 
      * @param int $custom_field_id
      * @param string $last_synced_on
      */
@@ -137,9 +138,8 @@ class SyncAccount {
             $was_synced = true;
         }
         else {
-            // deactivate the SyncAccount so it is not pulled to be synced again
-            // until credentials have been updated??
-            echo $this->_name . '\'s account does not have valid API credentials.<br />';
+            // this may be an appropriate place to add the feature
+            // of auto-notification of bad account credentials
         }
         return $was_synced;
     }
@@ -149,12 +149,13 @@ class SyncAccount {
      * @return boolean $was_saved
      */
     public function save() {
-        $was_saved = $this->_dao->saveSyncAccount($this);
+        $dao = new SyncAccountDAO();
+        $was_saved = $dao->saveSyncAccount($this);
         return $was_saved;
     }
 
     /**
-     * checks for valid MerchantOS API credentials
+     * Checks for valid MerchantOS API credentials
      * @return boolean $valid 
      */
     public function hasValidCredentialsMerchantOS() {
@@ -169,7 +170,7 @@ class SyncAccount {
     }
 
     /**
-     * checks for valid Highrise API credentials
+     * Checks for valid Highrise API credentials
      * @return boolean $valid 
      */
     public function hasValidCredentialsHighrise() {
@@ -186,7 +187,7 @@ class SyncAccount {
     /** 
      * Copies all Customers in MerchantOS to Highrise, and all People in Highrise to MerchantOS
      */
-    private function initialSync() {        
+    protected function initialSync() {        
         // create a custom field in Highrise to track MerchantOS's customer id for each contact
         $custom_field = $this->_api_interface->defineCustomHighriseField(self::HIGHRISE_CUST_ID_FIELD_NAME);    
         $this->_custom_field_id = $custom_field->id;
@@ -210,8 +211,11 @@ class SyncAccount {
     
     /** 
      * Syncs Customers and People that have been created or modified after $_last_synced_on.
+     * For contacts that were created before the account was last synced, and have been modified since,
+     * attempts to find and overwrite the corresponding contact in the other application.
+     * If a corresponding contact is not found, creates a new one.
      */
-    private function incrementalSync() {
+    protected function incrementalSync() {
         $customers_created_since = $this->_api_interface->readCustomersCreatedSince($this->_last_synced_on->getMerchantOSFormat());
         $customers_modified_since = $this->_api_interface->readCustomersModifiedSince($this->_last_synced_on->getMerchantOSFormat());
         $people_since = $this->_api_interface->readPeopleSince($this->_last_synced_on->getHighriseFormat());
@@ -241,7 +245,7 @@ class SyncAccount {
      * @param SimpleXMLElement $person
      * @return SimpleXMLElement $customer
      */
-    private function createCustomerFromPerson($person) {
+    protected function createCustomerFromPerson($person) {
         $new_customer = XMLTransformations::personToCustomer($person);
         try {
             $customer = $this->_api_interface->createCustomer($new_customer);
@@ -262,7 +266,7 @@ class SyncAccount {
      * @param SimpleXMLElement $person
      * @return SimpleXMLElement $customer
      */
-    private function updateCustomerFromPerson($person) {
+    protected function updateCustomerFromPerson($person) {
         $updated_customer = XMLTransformations::personToCustomer($person);
         foreach($person->subject_datas->subject_data as $subject_data) {
             if ($subject_data->subject_field_label == self::HIGHRISE_CUST_ID_FIELD_NAME) {
@@ -284,7 +288,7 @@ class SyncAccount {
      * @param SimpleXMLElement $customer
      * @return SimpleXMLElement $person
      */
-    private function createPersonFromCustomer($customer) {
+    protected function createPersonFromCustomer($customer) {
         $new_person = XMLTransformations::customerToPerson($customer, $this->_custom_field_id);
         try {
             $person = $this->_api_interface->createPerson($new_person);
@@ -300,7 +304,7 @@ class SyncAccount {
      * @param SimpleXMLElement $customer
      * @return SimpleXMLElement $person
      */
-    private function updatePersonFromCustomer($customer) {
+    protected function updatePersonFromCustomer($customer) {
         try {
             $person_id = $this->_api_interface->findPersonFromCustomerID(self::HIGHRISE_CUST_ID_FIELD_NAME, $customer->customerID);
             if (!$person_id) {
@@ -327,7 +331,7 @@ class SyncAccount {
      * @param int $mos_customer_id
      * @return SimpleXMLElement $updated_person
      */
-    private function updatePersonWithCustomerID($highrise_person_id, $mos_customer_id) {
+    protected function updatePersonWithCustomerID($highrise_person_id, $mos_customer_id) {
        $update_xml = new SimpleXMLElement('<person><subject_datas type="array"><subject_data><subject_field_id type="integer">' . 
                 $this->_custom_field_id . '</subject_field_id><value>' . $mos_customer_id . 
                 '</value></subject_data></subject_datas></person>');
@@ -346,23 +350,12 @@ class SyncAccount {
      * @param Exception $e 
      * @param string $data_involved
      */
-    public function logException($e, $data_involved=NULL) {
-        // write date, SyncAccount id, exception message and any data involved in the exception to a log   
+    protected function logException($e, $data_involved=NULL) {
+        // write date, SyncAccount id, exception message and any data involved to the exception table in the database   
         $now = new SyncDateTime();
         $exception_message = 'SyncAccount::' . $e->getMessage();
-
-        $string = $now->getMerchantOSFormat() . "\nACCT_ID: " . $this->_id . "\nDESCRIPTION: " . $exception_message;
-        if ($data_involved) {
-            $string .= "\nDATA_INVOLVED: " . $data_involved;
-        }
-        $string .= "\n\n";
-        
-        $filename = $_SERVER['DOCUMENT_ROOT'] . '/MerchantOS-Highrise-Sync/error_log.txt';
-        $f = fopen($filename, "a");
-        if ($f) {
-            fwrite($f, $string);
-            fclose($f);
-        }
+        $dao = new SyncAccountDAO();
+        $was_logged = $dao->logException($this->_id, $now->getDatabaseFormat(), $exception_message, $data_involved);
     }
     
     /**
@@ -381,6 +374,16 @@ class SyncAccount {
     public function setMOSAccountID($mos_account_id) {
         $this->_mos_acct_id = $mos_account_id;
     }
+    
+    
+    /**
+     * Set the id, database primary key
+     * @param int $new_id 
+     */
+    public function setID($new_id) {
+        $this->_id = $new_id;
+    }
+    
     
     /**
      * Get the id (database primary key)
@@ -452,7 +455,7 @@ class SyncAccount {
     
 
     /**
-     * Returns a string describing the values of each field
+     * Returns an HTML string describing the values of each field, really only meant for testing use
      * @return string $s
      */
     public function toString() {
@@ -461,7 +464,7 @@ class SyncAccount {
             $last_synced_on = $this->_last_synced_on->getDatabaseFormat();
         }
         
-        $s = '<pre>SyncAccount ID: ' . $this->_id . 
+        $s = '<p>SyncAccount ID: ' . $this->_id . 
                 '<br />  mos_acct_key: ' . $this->_mos_acct_key . 
                 '<br />  mos_api_key: ' . $this->_mos_api_key . 
                 '<br />  mos_acct_id: ' . $this->_mos_acct_id . 
@@ -469,7 +472,7 @@ class SyncAccount {
                 '<br />  highrise_username: ' . $this->_highrise_username . 
                 '<br />  custom_field_id: ' . $this->_custom_field_id . 
                 '<br />  last_synced_on: ' . $last_synced_on . 
-                '</pre>';
+                '</p>';
         return $s;
     }
 
