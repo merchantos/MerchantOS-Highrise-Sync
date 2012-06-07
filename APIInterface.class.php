@@ -87,9 +87,18 @@ class APIInterface {
         if ($this->_mos_api_key && $this->_mos_acct_id) {
             $credentials_valid = true;
             try {
-                $result = $this->_mos_api->makeAPICall('Account', 'Read');
-                if ($result->httpCode == 401) {
+                $result = $this->_mos_api->makeAPICall('Account.' . $this->_mos_acct_id, 'Read');
+                if ($result->httpCode == 401 || $result->httpCode == 404) {
+                    // bad API key or account num
                     $credentials_valid = false;
+                }
+                else {
+                    if (!$result->Customer->AccessPrivileges->create ||
+                            !$result->Customer->AccessPrivileges->read ||
+                            !$result->Customer->AccessPrivileges->update) {
+                        // doesn't have required Access Priviledges to customer data
+                        $credentials_valid = false;
+                    }
                 }
             }
             catch (Exception $e) {

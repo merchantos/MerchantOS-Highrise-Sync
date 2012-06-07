@@ -8,9 +8,10 @@
         Transforms an XML document from Highrise Person schema to MerchantOS Customer schema.
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet 
+    version="1.0" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" encoding="UTF-8" />
-
     <xsl:template match="Customer">
         <person>
             <first-name><xsl:value-of select="firstName" /></first-name>
@@ -20,7 +21,6 @@
             <xsl:if test="Note/isPublic = 'true'">
                 <background><xsl:value-of select="Note/note" /></background>
             </xsl:if>
-
             <contact-data>
                 <email-addresses>
                     <xsl:for-each select="Contact/Emails/ContactEmail">
@@ -57,8 +57,6 @@
                 </xsl:for-each>
                 </addresses>
             </contact-data>
-
         </person>
     </xsl:template>
-
 </xsl:stylesheet>

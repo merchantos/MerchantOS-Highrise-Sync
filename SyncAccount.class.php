@@ -81,7 +81,7 @@ class SyncAccount {
      * unless (their Highrise accounts) or (their database records, this class, and the DAO class) have been appropriately refactored and updated
      * @const HIGHRISE_CUST_ID_FIELD_NAME 
      */
-    const HIGHRISE_CUST_ID_FIELD_NAME = 'MerchantOS_CustomerID_DoNotRemove';
+    const HIGHRISE_CUST_ID_FIELD_NAME = 'MerchantOS_CustomerID_DoNotModify';
     
     
     /**
@@ -134,7 +134,8 @@ class SyncAccount {
                 $this->incrementalSync();
             }
             $this->_last_synced_on = new SyncDateTime();
-            $this->_dao->updateLastSyncedOn($this);
+            $dao = new SyncAccountDAO();
+            $dao->updateLastSyncedOn($this);
             $was_synced = true;
         }
         else {
@@ -220,23 +221,25 @@ class SyncAccount {
         $customers_modified_since = $this->_api_interface->readCustomersModifiedSince($this->_last_synced_on->getMerchantOSFormat());
         $people_since = $this->_api_interface->readPeopleSince($this->_last_synced_on->getHighriseFormat());
         foreach($customers_created_since->Customer as $customer) {
-            $this->createPersonFromCustomer($customer);
+            $customer_xml = new SimpleXMLElement($customer->asXML());
+            $this->createPersonFromCustomer($customer_xml);
         }
         foreach($customers_modified_since->Customer as $customer) {
-            $this->updatePersonFromCustomer($customer);
+            $customer_xml = new SimpleXMLElement($customer->asXML());
+            $this->updatePersonFromCustomer($customer_xml);
         }
         // Highrise only supports searching by combined created/updated since
         foreach($people_since->person as $person) {
+            $person_xml = new SimpleXMLElement($person->asXML());
             $created_at = new SyncDateTime($person->{'created-at'});
-            // so if person was created since last sync, create the customer
+            // so if person was created since last sync, create the customer, otherwise update
             if ($created_at->getInt() > $this->_last_synced_on->getInt()) {
-                $this->createCustomerFromPerson($person);
+                $this->createCustomerFromPerson($person_xml);
             }
-            // otherwise, update the customer
             else {
-                $this->updateCustomerFromPerson($person);
+                $this->updateCustomerFromPerson($person_xml);
             }
-        } 
+        }
     }
     
 
@@ -246,8 +249,8 @@ class SyncAccount {
      * @return SimpleXMLElement $customer
      */
     protected function createCustomerFromPerson($person) {
-        $new_customer = XMLTransformations::personToCustomer($person);
         try {
+            $new_customer = XMLTransformations::personToCustomer($person);
             $customer = $this->_api_interface->createCustomer($new_customer);
             // put new MOS customer ID in Highrise custom field
             $highrise_person_id = $person->id;
@@ -267,14 +270,14 @@ class SyncAccount {
      * @return SimpleXMLElement $customer
      */
     protected function updateCustomerFromPerson($person) {
-        $updated_customer = XMLTransformations::personToCustomer($person);
-        foreach($person->subject_datas->subject_data as $subject_data) {
-            if ($subject_data->subject_field_label == self::HIGHRISE_CUST_ID_FIELD_NAME) {
-                $customer_id = $subject_data->value;
-                break;
-            }
-        }
         try {
+            $updated_customer = XMLTransformations::personToCustomer($person);
+            foreach($person->subject_datas->subject_data as $subject_data) {
+                if ($subject_data->subject_field_label == self::HIGHRISE_CUST_ID_FIELD_NAME) {
+                    $customer_id = $subject_data->value;
+                    break;
+                }
+            }
             $customer = $this->_api_interface->updateCustomer($customer_id, $updated_customer);
         }
         catch (Exception $e) {
@@ -289,8 +292,8 @@ class SyncAccount {
      * @return SimpleXMLElement $person
      */
     protected function createPersonFromCustomer($customer) {
-        $new_person = XMLTransformations::customerToPerson($customer, $this->_custom_field_id);
         try {
+            $new_person = XMLTransformations::customerToPerson($customer, $this->_custom_field_id);
             $person = $this->_api_interface->createPerson($new_person);
         }
         catch (Exception $e) {

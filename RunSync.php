@@ -25,7 +25,6 @@ if ($argv[1]) {
 }
 else {
     $all_accounts = $dao->getAllSyncAccounts();
-
     foreach($all_accounts as $account) {
             $was_synced = $account->sync();
     }

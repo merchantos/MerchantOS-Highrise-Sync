@@ -3,8 +3,8 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
 
-require_once('APIInterface.class.php');
-require_once('SyncDateTime.class.php');
+require_once('../APIInterface.class.php');
+require_once('../SyncDateTime.class.php');
 
 define('BR', '<br />');
 
@@ -13,16 +13,17 @@ $mos_api_key = 'd95cf22bca845c8444715cc8e1840145e148bfaac16bd8eeaf7de66131e13eb4
 $mos_acct_id = 39184;
 $highrise_api_key = '0f5b609203e0f9b3af5d4325215876d2';
 $highrise_username = 'merchantosintern';
+
 $api_interface = new APIInterface($mos_api_key, $mos_acct_id, $highrise_api_key, $highrise_username);
 
+testHasValidCredentialsMerchantOS();
 
 
 
-
-
-// run successfully 2012-05-15
+// run successfully 2012-06-07
 function testHasValidCredentialsMerchantOS() {
     global $api_interface;
+    
     $valid_credentials = $api_interface->hasValidCredentialsMerchantOS();
     if ($valid_credentials === true) {
         echo 'valid MerchantOS credentials';
