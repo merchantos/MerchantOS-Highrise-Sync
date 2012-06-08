@@ -62,18 +62,6 @@ class SyncAccount {
      */
     protected $_last_synced_on;
     
-    /**
-     * An instance of APIInterface responsible for the SyncAccount's API call needs
-     * @var APIInterface
-     */
-    protected $_api_interface;
-    
-    /**
-     * An instance of SyncAccountDAO responsible for the SyncAccount's data access needs
-     * @var SyncAccountDAO 
-     */
-    protected $_dao;
-    
     
     /**
      * The name of the 'foreign key' field that this application defines and then uses to sync updates to contact data.
@@ -114,9 +102,6 @@ class SyncAccount {
         if ($last_synced_on) {
             $this->_last_synced_on = new SyncDateTime($last_synced_on);
         }
-        
-        $this->_api_interface = new APIInterface($mos_api_key, $mos_acct_id, $highrise_api_key, $highrise_username);
-        $this->_dao = new SyncAccountDAO();
     }
     
     
@@ -162,7 +147,8 @@ class SyncAccount {
     public function hasValidCredentialsMerchantOS() {
         $valid = false;
         try {
-            $valid = $this->_api_interface->hasValidCredentialsMerchantOS();
+            $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
+            $valid = $api_interface->hasValidCredentialsMerchantOS();
         }
         catch (Exception $e) {
             $this->logException(new Exception('hasValidCredentialsMerchantOS Error: ' . $e->getMessage()));
@@ -177,7 +163,8 @@ class SyncAccount {
     public function hasValidCredentialsHighrise() {
         $valid = false;
         try {
-            $valid = $this->_api_interface->hasValidCredentialsHighrise();
+            $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
+            $valid = $api_interface->hasValidCredentialsHighrise();
         }
         catch (Exception $e) {
             $this->logException(new Exception('hasValidCredentialsHighrise Error: ' . $e->getMessage()));
@@ -189,14 +176,17 @@ class SyncAccount {
      * Copies all Customers in MerchantOS to Highrise, and all People in Highrise to MerchantOS
      */
     protected function initialSync() {        
+        $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
         // create a custom field in Highrise to track MerchantOS's customer id for each contact
-        $custom_field = $this->_api_interface->defineCustomHighriseField(self::HIGHRISE_CUST_ID_FIELD_NAME);    
+        $custom_field = $api_interface->defineCustomHighriseField(self::HIGHRISE_CUST_ID_FIELD_NAME);    
         $this->_custom_field_id = $custom_field->id;
-        $this->_dao->updateCustomFieldID($this);
+        
+        $dao = new SyncAccountDAO();
+        $dao->updateCustomFieldID($this);
         
         // get all existing contacts from each service
-        $customers = $this->_api_interface->readAllCustomers();
-        $people = $this->_api_interface->readAllPeople();
+        $customers = $api_interface->readAllCustomers();
+        $people = $api_interface->readAllPeople();
         // turn each customer into a new person
         foreach($customers->Customer as $customer) {
             $customer_xml = new SimpleXMLElement($customer->asXML());
@@ -217,9 +207,10 @@ class SyncAccount {
      * If a corresponding contact is not found, creates a new one.
      */
     protected function incrementalSync() {
-        $customers_created_since = $this->_api_interface->readCustomersCreatedSince($this->_last_synced_on->getMerchantOSFormat());
-        $customers_modified_since = $this->_api_interface->readCustomersModifiedSince($this->_last_synced_on->getMerchantOSFormat());
-        $people_since = $this->_api_interface->readPeopleSince($this->_last_synced_on->getHighriseFormat());
+        $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
+        $customers_created_since = $api_interface->readCustomersCreatedSince($this->_last_synced_on->getMerchantOSFormat());
+        $customers_modified_since = $api_interface->readCustomersModifiedSince($this->_last_synced_on->getMerchantOSFormat());
+        $people_since = $api_interface->readPeopleSince($this->_last_synced_on->getHighriseFormat());
         foreach($customers_created_since->Customer as $customer) {
             $customer_xml = new SimpleXMLElement($customer->asXML());
             $this->createPersonFromCustomer($customer_xml);
@@ -250,8 +241,9 @@ class SyncAccount {
      */
     protected function createCustomerFromPerson($person) {
         try {
+            $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
             $new_customer = XMLTransformations::personToCustomer($person);
-            $customer = $this->_api_interface->createCustomer($new_customer);
+            $customer = $api_interface->createCustomer($new_customer);
             // put new MOS customer ID in Highrise custom field
             $highrise_person_id = $person->id;
             $mos_customer_id = $customer->customerID;
@@ -278,7 +270,8 @@ class SyncAccount {
                     break;
                 }
             }
-            $customer = $this->_api_interface->updateCustomer($customer_id, $updated_customer);
+            $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
+            $customer = $api_interface->updateCustomer($customer_id, $updated_customer);
         }
         catch (Exception $e) {
             $this->logException(new Exception('updateCustomerFromPerson Error: ' . $e->getMessage()), $person->asXML());
@@ -294,7 +287,8 @@ class SyncAccount {
     protected function createPersonFromCustomer($customer) {
         try {
             $new_person = XMLTransformations::customerToPerson($customer, $this->_custom_field_id);
-            $person = $this->_api_interface->createPerson($new_person);
+            $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
+            $person = $api_interface->createPerson($new_person);
         }
         catch (Exception $e) {
             $this->logException(new Exception('createPersonFromCustomer Error: ' . $e->getMessage()), $customer->asXML());
@@ -309,7 +303,8 @@ class SyncAccount {
      */
     protected function updatePersonFromCustomer($customer) {
         try {
-            $person_id = $this->_api_interface->findPersonFromCustomerID(self::HIGHRISE_CUST_ID_FIELD_NAME, $customer->customerID);
+            $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
+            $person_id = $api_interface->findPersonFromCustomerID(self::HIGHRISE_CUST_ID_FIELD_NAME, $customer->customerID);
             if (!$person_id) {
                 // entering this branch means that the MerchantOS customer was created before last_synced_on
                 // and modified since last_synced_on, but we can't locate a corresponding Highrise Person
@@ -318,7 +313,7 @@ class SyncAccount {
             }
             else {
                 $updated_person = XMLTransformations::customerToPerson($customer, $this->_custom_field_id);
-                $person = $this->_api_interface->updatePerson($person_id, $updated_person);
+                $person = $api_interface->updatePerson($person_id, $updated_person);
             }
         }
         catch (Exception $e) {
@@ -339,7 +334,8 @@ class SyncAccount {
                 $this->_custom_field_id . '</subject_field_id><value>' . $mos_customer_id . 
                 '</value></subject_data></subject_datas></person>');
         try {
-            $updated_person = $this->_api_interface->updatePerson($highrise_person_id, $update_xml);
+            $api_interface = new APIInterface($this->_mos_api_key, $this->_mos_acct_id, $this->_highrise_api_key, $this->_highrise_username);
+            $updated_person = $api_interface->updatePerson($highrise_person_id, $update_xml);
         }
         catch (Exception $e) {
             $data_involved = 'highrise_person_id = ' . $highrise_person_id . ' mos_customer_id = ' . $mos_customer_id;
@@ -361,6 +357,8 @@ class SyncAccount {
         $was_logged = $dao->logException($this->_id, $now->getDatabaseFormat(), $exception_message, $data_involved);
     }
     
+    
+    
     /**
      * Set the MerchantOS API key
      * @param string $mos_api_key 
@@ -376,6 +374,24 @@ class SyncAccount {
      */
     public function setMOSAccountID($mos_account_id) {
         $this->_mos_acct_id = $mos_account_id;
+    }
+    
+    
+    /**
+     * Set the Highrise API key
+     * @param string $highrise_api_key 
+     */
+    public function setHighriseAPIKey($highrise_api_key) {
+        $this->_highrise_api_key = $highrise_api_key;
+    }
+    
+    
+    /**
+     * Set the Highrise username
+     * @param string $highrise_username 
+     */
+    public function setHighriseUsername($highrise_username) {
+        $this->_highrise_username = $highrise_username;
     }
     
     

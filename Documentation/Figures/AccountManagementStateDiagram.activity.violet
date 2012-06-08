@@ -121,8 +121,8 @@ invalid credentials</string>
    </object>
    <object class="java.awt.geom.Point2D$Double">
     <void method="setLocation">
-     <double>522.0</double>
-     <double>499.0</double>
+     <double>516.0</double>
+     <double>415.0</double>
     </void>
    </object>
   </void>
@@ -261,7 +261,7 @@ RunSync</string>
    <object class="java.awt.geom.Point2D$Double">
     <void method="setLocation">
      <double>719.0</double>
-     <double>368.0</double>
+     <double>348.0</double>
     </void>
    </object>
   </void>
@@ -302,6 +302,22 @@ information to reloaded page.</string>
     <void method="setLocation">
      <double>52.0</double>
      <double>49.0</double>
+    </void>
+   </object>
+  </void>
+  <void method="addNode">
+   <object id="ActivityNode11" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
+    <void property="name">
+     <void property="text">
+      <string>DISPLAY no changes
+to subscribtion status</string>
+     </void>
+    </void>
+   </object>
+   <object class="java.awt.geom.Point2D$Double">
+    <void method="setLocation">
+     <double>512.0</double>
+     <double>498.0</double>
     </void>
    </object>
   </void>
@@ -524,15 +540,6 @@ information to reloaded page.</string>
      <object class="com.horstmann.violet.ArrowHead" field="V"/>
     </void>
    </object>
-   <object idref="ActivityNode3"/>
-   <object idref="ActivityNode7"/>
-  </void>
-  <void method="connect">
-   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
-    <void property="endArrowHead">
-     <object class="com.horstmann.violet.ArrowHead" field="V"/>
-    </void>
-   </object>
    <object idref="ActivityNode6"/>
    <object idref="ActivityNode7"/>
   </void>
@@ -544,6 +551,15 @@ information to reloaded page.</string>
    </object>
    <object idref="ActivityNode0"/>
    <object idref="ActivityNode7"/>
+  </void>
+  <void method="connect">
+   <object class="com.horstmann.violet.product.diagram.activity.ActivityTransitionEdge">
+    <void property="endArrowHead">
+     <object class="com.horstmann.violet.ArrowHead" field="V"/>
+    </void>
+   </object>
+   <object idref="ActivityNode3"/>
+   <object idref="ActivityNode11"/>
   </void>
  </object>
 </java>
