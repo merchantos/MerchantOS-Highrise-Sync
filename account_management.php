@@ -83,6 +83,8 @@ function attemptNewHighriseCredentials($account) {
     $was_saved = false;
     if ($account->hasValidCredentialsHighrise()) {
         $was_saved = $account->save();
+        $command = '/usr/bin/php5 ./RunSync.php ' . $account->getMOSAccountKey();
+        exec("$command >> /dev/null 2>&1 &");
         if ($was_saved) {
             displaySuccessfulNewCredentials();
         }
@@ -207,14 +209,12 @@ function displayExceptions($existing_account) {
  * Displays a form appropriate to the subscription status of the account
  * @param SyncAccount $existing_account 
  */
-function displayForm($existing_account) {
-    
-    
+function displayForm($existing_account) {   
     $form = '<form action="account_management.php" method="get">';
     
-    $form .=   '<input type="hidden" name="mos_account_key" value="' . $_GET[GET_MOS_ACCOUNT_KEY] . '" />
-                <input type="hidden" name="mos_api_key" value="' . $_GET[GET_MOS_API_KEY] . '" />
-                <input type="hidden" name="mos_account_id" value="' . $_GET[GET_MOS_ACCOUNT_ID] . '" />';
+    $form .=   '<input type="hidden" name="' . GET_MOS_ACCOUNT_KEY . '" value="' . $_GET[GET_MOS_ACCOUNT_KEY] . '" />
+                <input type="hidden" name="' . GET_MOS_API_KEY . '" value="' . $_GET[GET_MOS_API_KEY] . '" />
+                <input type="hidden" name="' . GET_MOS_ACCOUNT_ID . '" value="' . $_GET[GET_MOS_ACCOUNT_ID] . '" />';
     
     $form .=   '<input type="text" name="highrise_api_key" placeholder="Your Highrise API Key" />
                 <input type="text" name="highrise_username" placeholder="Your Highrise Username" />    

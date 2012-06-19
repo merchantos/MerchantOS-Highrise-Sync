@@ -115,14 +115,16 @@ to database.</string>
     <void property="name">
      <void property="text">
       <string>DISPLAY warning
-invalid credentials</string>
+invalide credentials
+and no change
+to subscribtion status</string>
      </void>
     </void>
    </object>
    <object class="java.awt.geom.Point2D$Double">
     <void method="setLocation">
-     <double>516.0</double>
-     <double>415.0</double>
+     <double>509.0</double>
+     <double>503.0</double>
     </void>
    </object>
   </void>
@@ -302,22 +304,6 @@ information to reloaded page.</string>
     <void method="setLocation">
      <double>52.0</double>
      <double>49.0</double>
-    </void>
-   </object>
-  </void>
-  <void method="addNode">
-   <object id="ActivityNode11" class="com.horstmann.violet.product.diagram.activity.ActivityNode">
-    <void property="name">
-     <void property="text">
-      <string>DISPLAY no changes
-to subscribtion status</string>
-     </void>
-    </void>
-   </object>
-   <object class="java.awt.geom.Point2D$Double">
-    <void method="setLocation">
-     <double>512.0</double>
-     <double>498.0</double>
     </void>
    </object>
   </void>
@@ -559,7 +545,7 @@ to subscribtion status</string>
     </void>
    </object>
    <object idref="ActivityNode3"/>
-   <object idref="ActivityNode11"/>
+   <object idref="ActivityNode7"/>
   </void>
  </object>
 </java>
