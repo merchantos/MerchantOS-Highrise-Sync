@@ -14,11 +14,13 @@ require_once('SyncAccount.class.php');
  * @author Erika Ellison  
  */
 class SyncAccountDAO {
-    const DB_HOSTNAME = '127.0.0.1';
-    const DB_USERNAME = 'root';
-    const DB_PASSWORD = 'mos123';
-    const DB_NAME = 'sync';
+    // must be changed for deployment
+    const DB_HOSTNAME = '';
+    const DB_USERNAME = '';
+    const DB_PASSWORD = '';
     
+    // can be changed for deployment provided deploy_database is also changed
+    const DB_NAME = 'sync';
     const SYNC_ACCT_TABLE = 'sync_accounts';
     const EXCEPTIONS_TABLE = 'exceptions_log';
     
